@@ -1,5 +1,6 @@
-import React, { Component, PropTypes, createElement } from 'react';
+import React, { Component, PropTypes } from 'react';
 import firebase from 'firebase';
+import TextField from 'material-ui/TextField';
 
 class AddFlower extends Component {
   constructor(props) {
@@ -8,8 +9,10 @@ class AddFlower extends Component {
       {
         variety: '',
         commonName: '',
-        priceSmall: 0,
-        priceLarge: 0
+        priceSmall: '',
+        priceLarge: '',
+        img: '',
+        instructions: ''
       }
   }
 
@@ -22,38 +25,55 @@ class AddFlower extends Component {
     e.preventDefault();
     let flower = this.state;
     console.log(flower);
-    const ref = firebase.database().ref('flowers');
-    ref.push(flower)
-    .then(() => {
-      this.context.router.push('/');
-    });
+    const ref = firebase.database().ref('premiums');
+    const storageRef = firebase.storage().ref();
+    storageRef.child(flower.img).getDownloadURL()
+      .then(url => {
+        flower.img = url;
+        console.log('premium: ', flower);
+        ref.push(flower)
+          .then(() => {
+            this.context.router.push('/');
+          });
+      });
   }
 
   render() {
 
     return (
       <div className='add-flowers'>
-        <form className='form-horizontal' onSubmit={this.handleSubmit.bind(this)}>
-          <div className='form-group col-sm-4'>
+        <form onSubmit={this.handleSubmit.bind(this)}>
+          <div>
             <label>Variety</label>
-            <input name='variety' className='form-control' type='text' onChange={this.handleChange.bind(this)}
-              value={this.state.variety}/>
+            <TextField name='variety' hint='Variety' onChange={this.handleChange.bind(this)}
+            value={this.state.variety}/>
           </div>
-          <div className='form-group  col-sm-4'>
+          <div>
             <label>Common Name</label>
-            <input name='commonName' className='form-control' type='text' onChange={this.handleChange.bind(this)}
+            <TextField name='commonName' hint='Common Name' type='text' onChange={this.handleChange.bind(this)}
               value={this.state.commonName}/>
           </div>
-          <div className='form-group  col-sm-4'>
+          <div>
             <label>Small Pot Price</label>
-            <input name='priceSmall' className='form-control' type='number' onChange={this.handleChange.bind(this)}
+            <TextField name='priceSmall' hint='Small Pot Price' type='number' onChange={this.handleChange.bind(this)}
               value={this.state.priceSmall}/>
           </div>
-          <div className='form-group  col-sm-4'>
+          <div>
             <label>Medium Pot Price</label>
-            <input name='priceLarge' className='form-control' type='number' onChange={this.handleChange.bind(this)}
+            <TextField name='priceLarge' hint='Medium Pot Price' type='number' onChange={this.handleChange.bind(this)}
               value={this.state.priceLarge}/>
            </div>
+           <div>
+             <label>Image Source</label>
+             <TextField name='img' hint='ImageSource' onChange={this.handleChange.bind(this)}
+               value={this.state.img}/>
+            </div>
+          <div>
+              <label>Instructions</label>
+              <TextField name='instructions'
+              hint='Growing Instructions' onChange={this.handleChange.bind(this)}
+                value={this.state.instructions}/>
+             </div>
            <div className='form-group'>
            <button type='submit' className='form-control'>
              Add
@@ -65,9 +85,8 @@ class AddFlower extends Component {
   }
 }
 
-// AddFlower.propTypes = {
-//   value: React.PropTypes.object.isRequired,
-//   onChange: React.PropTypes.func.isRequired,
-// }
+AddFlower.propTypes = {
+  hint: PropTypes.string
+}
 
 export default AddFlower;

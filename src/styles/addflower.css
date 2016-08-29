@@ -11,9 +11,14 @@
   text-align: center;
 }
 
-.add-flowers form {
-  display: flex;
-  justify-content: flex-start;
-  flex-flow: column wrap;
-  align-items: flex-end;
+.add-flowers {
+  width: 100%
+}
+
+.flower-grid {
+  width: '60%'
+}
+
+.shopping-cart {
+  width: '40%'
 }

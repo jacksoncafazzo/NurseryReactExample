@@ -17,11 +17,11 @@ const config = {
 
 firebase.initializeApp(config);
 
-const AppbarStyles = () => getMuiTheme(BaseTheme, {
-  palette: {
-    primary1Color: '#f4511e'
-  }
-});
+// const AppbarStyles = () => getMuiTheme(BaseTheme, {
+//   palette: {
+//     primary1Color: '#f4511e'
+//   }
+// });
 
 class App extends Component {
   constructor(props) {
@@ -29,6 +29,10 @@ class App extends Component {
     this.state = {
       loggedIn: (null !== firebase.auth().currentUser)
     }
+  }
+
+  getChildContext() {
+    return { muiTheme: getMuiTheme(BaseTheme) };
   }
 
   componentWillMount() {
@@ -48,13 +52,17 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <MuiThemeProvider muiTheme={AppbarStyles()}>
-        <Navigation />
+        <MuiThemeProvider>
+          <Navigation />
         </MuiThemeProvider>
         {this.props.children}
       </div>
     );
   }
+}
+
+App.childContextTypes = {
+  muiTheme: PropTypes.object.isRequired
 }
 
 export default App;
