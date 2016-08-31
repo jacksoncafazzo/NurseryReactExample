@@ -1,3 +1,21 @@
-.flower-grid {
+.flowers {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: space-around;
+}
+
+.flower-card {
+  justify-content: left;
   width: 300px;
+}
+
+.flower-name {
+  font-size: 2em;
+}
+
+.flower-variety {
+  font-style: italic;
+  align-self: flex-end;
 }

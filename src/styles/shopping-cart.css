@@ -1,0 +1,14 @@
+.shopping-cart {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.cart-card {
+  max-width: 60px;
+}
+
+.orders-total {
+  padding-top: 0px;
+}

@@ -6,6 +6,7 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import firebase from 'firebase';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -52,7 +53,7 @@ export default class NavContainer extends Component {
   }
 
   renderLoginOrLogout() {
-    if (this.state.loggedIn) {
+    if (null !== firebase.auth().currentUser) {
       return (
         <MenuItem>
           <Link to='/logout'>Logout</Link>
@@ -91,7 +92,7 @@ export default class NavContainer extends Component {
   render() {
     return(
       <AppBar
-        title='a good site...'
+        title='nursery example'
         iconElementLeft={<IconButton><NavigationClose /></IconButton>}
         iconElementRight={this.renderNavigation()}
       />

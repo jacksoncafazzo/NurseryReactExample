@@ -8,6 +8,8 @@ import Login from './components/login-register/Login';
 import Logout from './components/login-register/Logout';
 import Register from './components/login-register/Register';
 import requireAuth from './utils/authenticated';
+import User from './components/login-register/user-details';
+import Users from './components/login-register/users.js';
 
 export default (
   <Route path='/' component={App}>
@@ -16,5 +18,8 @@ export default (
     <Route path='/login' component={Login} />
     <Route path='/logout' component={Logout} />
     <Route path='/register' component={Register} />
+    <Route path='/users' component={Users} onEnter={requireAuth}>
+      <Route path='/users/:companyname' component={User} />
+    </Route>
   </Route>
 );

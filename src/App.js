@@ -17,17 +17,12 @@ const config = {
 
 firebase.initializeApp(config);
 
-// const AppbarStyles = () => getMuiTheme(BaseTheme, {
-//   palette: {
-//     primary1Color: '#f4511e'
-//   }
-// });
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loggedIn: (null !== firebase.auth().currentUser)
+      loggedIn: (null !== firebase.auth().currentUser),
+      user: {}
     }
   }
 
@@ -37,8 +32,13 @@ class App extends Component {
 
   componentWillMount() {
     firebase.auth().onAuthStateChanged(firebaseUser => {
+      let user = {
+        email: firebaseUser.email,
+        uid: firebaseUser.uid
+      }
       this.setState({
-        loggedIn: (null !== firebaseUser)
+        loggedIn: (null !== firebaseUser),
+        user: user
       });
 
       if (firebaseUser) {
@@ -51,12 +51,13 @@ class App extends Component {
 
   render() {
     return (
+      <MuiThemeProvider>
       <div className="App">
-        <MuiThemeProvider>
-          <Navigation />
-        </MuiThemeProvider>
-        {this.props.children}
+        <Navigation loggedIn={this.state.loggedIn}
+          user={this.state.user}/>
+          {this.props.children}
       </div>
+    </MuiThemeProvider>
     );
   }
 }

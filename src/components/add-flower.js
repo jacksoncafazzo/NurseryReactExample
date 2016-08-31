@@ -16,15 +16,19 @@ class AddFlower extends Component {
       }
   }
 
+  componentWillMount() {
+    //const ref = firebase.database().ref();
+    console.log('props', this.props)
+  }
+
   handleChange(event) {
-    console.log({[event.target.name]: event.target.value})
     this.setState({[event.target.name]: event.target.value});
   }
 
   handleSubmit(e) {
     e.preventDefault();
     let flower = this.state;
-    console.log(flower);
+    console.log('state flower', flower);
     const ref = firebase.database().ref('premiums');
     const storageRef = firebase.storage().ref();
     storageRef.child(flower.img).getDownloadURL()
@@ -32,46 +36,37 @@ class AddFlower extends Component {
         flower.img = url;
         console.log('premium: ', flower);
         ref.push(flower)
-          .then(() => {
-            this.context.router.push('/');
-          });
+          .then(this.context.router.push('/'));
       });
   }
 
   render() {
-
     return (
       <div className='add-flowers'>
         <form onSubmit={this.handleSubmit.bind(this)}>
           <div>
-            <label>Variety</label>
-            <TextField name='variety' hint='Variety' onChange={this.handleChange.bind(this)}
+            <TextField name='variety' floatingLabelText='Variety' onChange={this.handleChange.bind(this)}
             value={this.state.variety}/>
           </div>
           <div>
-            <label>Common Name</label>
-            <TextField name='commonName' hint='Common Name' type='text' onChange={this.handleChange.bind(this)}
+            <TextField name='commonName' floatingLabelText='Common Name' type='text' onChange={this.handleChange.bind(this)}
               value={this.state.commonName}/>
           </div>
           <div>
-            <label>Small Pot Price</label>
-            <TextField name='priceSmall' hint='Small Pot Price' type='number' onChange={this.handleChange.bind(this)}
+            <TextField name='priceSmall' floatingLabelText='Small Pot Price' type='number' onChange={this.handleChange.bind(this)}
               value={this.state.priceSmall}/>
           </div>
           <div>
-            <label>Medium Pot Price</label>
-            <TextField name='priceLarge' hint='Medium Pot Price' type='number' onChange={this.handleChange.bind(this)}
+            <TextField name='priceLarge' floatingLabelText='Medium Pot Price' type='number' onChange={this.handleChange.bind(this)}
               value={this.state.priceLarge}/>
            </div>
            <div>
-             <label>Image Source</label>
-             <TextField name='img' hint='ImageSource' onChange={this.handleChange.bind(this)}
+             <TextField name='img' floatingLabelText='ImageSource' onChange={this.handleChange.bind(this)}
                value={this.state.img}/>
             </div>
           <div>
-              <label>Instructions</label>
               <TextField name='instructions'
-              hint='Growing Instructions' onChange={this.handleChange.bind(this)}
+              floatingLabelText='Growing Instructions' onChange={this.handleChange.bind(this)}
                 value={this.state.instructions}/>
              </div>
            <div className='form-group'>
@@ -86,7 +81,11 @@ class AddFlower extends Component {
 }
 
 AddFlower.propTypes = {
-  hint: PropTypes.string
+  floatingLabelText: PropTypes.string
+}
+
+AddFlower.contextTypes = {
+  router: PropTypes.string
 }
 
 export default AddFlower;

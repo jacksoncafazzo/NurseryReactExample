@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import * as firebase from 'firebase';
+import firebase from 'firebase';
 
 class Logout extends Component {
   constructor(props) {
@@ -10,8 +10,13 @@ class Logout extends Component {
   }
 
   componentDidMount() {
-    firebase.auth().signOut();
-    this.setState({ loggedIn: false });
+    firebase.auth().signOut()
+      .then(() => {
+        this.setState({ loggedIn: false });
+        //success
+      }, (error) => {
+        this.setState({ error: error });
+      });
   }
 
   render() {

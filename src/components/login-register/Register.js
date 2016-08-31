@@ -1,6 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import * as firebase from 'firebase';
+import firebase from 'firebase';
 import { browserHistory } from 'react-router';
+import TextField from 'material-ui/TextField';
+import RaisedButton from 'material-ui/RaisedButton';
+import {createUser} from '../../actions/firebase-actions';
 
 class Register extends Component {
   static contextTypes = {
@@ -9,10 +12,13 @@ class Register extends Component {
 
   constructor(props) {
     super(props);
+    console.log('props', props.uid);
     this.state = {
+      companyName: '',
       error: false,
       email: '',
-      pw: ''
+      pw: '',
+      phone: ''
     };
   }
 
@@ -20,47 +26,67 @@ class Register extends Component {
     e.preventDefault();
     let email = e.target.email.value;
     let pw = e.target.pw.value;
+    let companyName = e.target.companyName.value;
+    let phone = e.target.phone.value;
     let self = this;
-    // Add signup event
-    firebase.auth().createUserWithEmailAndPassword( email, pw)
-       .then( browserHistory.push('/addflower') )
-       .catch( self.setState({ error: e.message }) );
-  }
+    //Add signup event
+    firebase.auth().createUserWithEmailAndPassword(email, pw)
+    .then((user) => {
+    let uid = user.uid;
+    console.log(uid)
+      let newUser = {
+        displayName: companyName,
+        phone: phone,
+        email: email,
+        pw: pw,
+        uid: user.uid
+      }
+      let createUserResult = createUser(newUser);
+      console.log('createUserResult', createUserResult);
+      browserHistory.push('/users/' + uid);
+   })
+   .catch( self.setState({ error: e.message }) )
+}
 
   updateState(e) {
-    let inputName = e.target.name;
-    if (inputName === 'pw') {
-      this.setState({ pw: e.target.value });
-    } else if (inputName === 'email') {
-      this.setState({ email: e.target.value});
-    }
+    this.setState({ [e.target.name]: e.target.value });
   }
 
   clearInput() {
-    this.setState({ email: '', pw: ''});
+    this.setState({ companyName: '', email: '', pw: '', phone: 'phone'});
   }
 
   render() {
     let errors = this.state.error ? <p> {this.state.error} </p> : '';
     return (
-    <div className='col-sm-6 col-sm-offset-3'>
+    <div className='register-form'>
         <h1> Register </h1>
         <form onSubmit={this.registerSubmit.bind(this)}>
-          <div className='form-group'>
-            <label> Email </label>
-            <input className='form-control'
-              name='email' placeholder='Email'
-              value={this.state.email}
-              onChange={this.updateState.bind(this)}></input>
+          <div>
+            <TextField
+              name='companyName' floatingLabelText='Company Name (login name)'
+              value={this.state.companyName}
+              onChange={this.updateState.bind(this)}></TextField>
           </div>
-          <div className='form-group'>
-            <label>Password</label>
-            <input name='pw' type='password' className='form-control' placeholder='Password' value={this.state.pw} onChange={this.updateState.bind(this)}></input>
+          <div>
+            <TextField
+              name='phone' floatingLabelText='Contact Phone Number'
+              value={this.state.phone}
+              onChange={this.updateState.bind(this)}></TextField>
+          </div>
+          <div>
+            <TextField
+              name='email' floatingLabelText='Email'
+              value={this.state.email}
+              onChange={this.updateState.bind(this)}></TextField>
+          </div>
+          <div>
+            <TextField name='pw' type='password' floatingLabelText='Password' value={this.state.pw} onChange={this.updateState.bind(this)}></TextField>
           </div>
           {errors}
-          <button type='submit' className='btn btn-primary'>Register</button>
+          <RaisedButton type='submit' label='Register' />
+          <RaisedButton onClick={this.clearInput}  label='CLEAR' />
         </form>
-        <button onClick={this.clearInput}>CLEAR</button>
       </div>
     );
   }

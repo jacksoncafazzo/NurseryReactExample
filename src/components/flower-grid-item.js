@@ -3,38 +3,37 @@ import { GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
-import firebase from 'firebase';
 import RaisedButton from 'material-ui/RaisedButton';
-
+import { saveUserFlower } from '../actions/firebase-actions';
 
 class FlowerGrid extends Component {
   constructor(props) {
     super(props);
-
-  }
-
-  handleBuySmall(flower) {
-    const user = firebase.auth().currentUser;
-    let resultObject = {
-      userId: user.uid,
-      userEmail: user.email,
+    this.state = {
+      flower: props.flower
     }
-    Object.keys(flower).map((key, i) => {
-      resultObject[key] = flower[key];
-    })
-    console.log('result object', resultObject);
-
-    let ref = firebase.database().ref('userFlowers');
-    ref.push(flower)
-       .then((result, errors) => {
-         console.log(errors);
-
-       });
+    
+    this.handleBuySmall = this.handleBuyLarge.bind(this);
+    this.handleBuyLarge = this.handleBuyLarge.bind(this);
   }
 
-  handleBuyLarge() {
-
+  handleBuySmall(event) {
+    let flower = this.state.flower;
+    let resultObject = {
+      price: flower.priceSmall
+    }
+    saveUserFlower(resultObject, flower);
   }
+
+  handleBuyLarge(event) {
+    let flower = this.state.flower;
+    let resultObject = {
+      price: flower.priceLarge
+    }
+    saveUserFlower(resultObject, flower);
+  }
+
+
 
   render() {
     let flower = this.props.flower;
@@ -51,10 +50,10 @@ class FlowerGrid extends Component {
           >
           <img src={flower.img} alt={flower.variety}/>
         </GridTile>
-        <RaisedButton label={`buy small pot $${flower.priceSmall}`} onClick={() => {
-            this.handleBuySmall(flower)}
-        } />
-        <RaisedButton label={`buy large pot $${flower.priceLarge}`} onClick={this.handleBuyLarge.bind(this)} />
+        <RaisedButton label={`buy small pot $${flower.priceSmall}`} onClick={this.handleBuySmall}
+        value={flower}
+        />
+      <RaisedButton label={`buy large pot $${flower.priceLarge}`} onClick={this.handleBuyLarge} value={flower} />
         </div>
 
       );
