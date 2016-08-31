@@ -5,6 +5,10 @@ export function createUser(user) {
   firebase.database().ref(`users/${user.uid}`).set(user);
 }
 
+export function getUser(uid) {
+
+}
+
 export function saveUserFlower(resultObject, flower) {
   const user = firebase.auth().currentUser;
   resultObject.userId = user.uid;
@@ -23,4 +27,8 @@ export function removeUserFlower(key) {
   const user = firebase.auth().currentUser;
   firebase.database().ref(`users/${user.uid}/${key}`).remove();
   console.log('deleted');
+}
+
+export function saveUserState(state) {
+  firebase.database().ref(`users/${state.user.uid}`).set({ state: state});
 }

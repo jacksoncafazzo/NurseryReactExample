@@ -20,12 +20,8 @@ class Login extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-
-    let self = Login;
-    console.log(self);
     firebase.auth().signInWithEmailAndPassword(e.target.email.value, e.target.pw.value).then((result) => {
       //User Signed In
-      console.log('result', result);
       browserHistory.push('/');
       console.log('User signed in!');
     }).catch((error) => {

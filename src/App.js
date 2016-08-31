@@ -5,6 +5,7 @@ import Navigation from './components/navigation';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import BaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
+import { getUser, saveUserState} from './actions/firebase-actions';
 
 import logo from './logo.svg';
 import './App.css';
@@ -22,7 +23,8 @@ class App extends Component {
     super(props);
     this.state = {
       loggedIn: (null !== firebase.auth().currentUser),
-      user: {}
+      user: {},
+      error: ''
     }
   }
 
@@ -32,21 +34,28 @@ class App extends Component {
 
   componentWillMount() {
     firebase.auth().onAuthStateChanged(firebaseUser => {
-      let user = {
-        email: firebaseUser.email,
-        uid: firebaseUser.uid
-      }
       this.setState({
         loggedIn: (null !== firebaseUser),
-        user: user
+        user: firebaseUser
       });
 
       if (firebaseUser) {
         console.log('Logged In', firebaseUser);
+        firebase.database.ref(`users/${firebaseUser.uid}`)
+          .set({ user: firebaseUser })
+          .catch((error) => {
+          this.setState({ error: error });
+          saveUserState(this.state, firebaseUser);
+        });
       } else {
         console.log('Not logged in dude');
+        saveUserState(this.state);
       }
     });
+  }
+
+  componentWillUnmount() {
+    saveUserState(this.state);
   }
 
   render() {

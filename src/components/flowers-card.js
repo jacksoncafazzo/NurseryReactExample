@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardActions, CardMedia, CardText, CardHeader, CardTitle } from 'material-ui/Card';
+import { Card, CardActions, CardMedia, CardText, CardHeader } from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import { saveUserFlower } from '../actions/firebase-actions';
 
@@ -39,32 +39,35 @@ class FlowerCard extends Component {
 
     let flower = this.props.flower;
     return (
-      <Card className='flower-card'>
+      <Card className='flower-card' >
         <CardHeader
           className='flower-header'
           actAsExpander={true}
           showExpandableButton={true}
           title={flower.commonName}
+          titleStyle={{textAlign: 'left'}}
           avatar={flower.img}
           subtitle={flower.variety}
+          children={<div style={{ whiteSpace: 'pre-wrap', maxWidth: 300, marginLeft: 'auto', marginRight: 25, alignSelf: 'flex-end' }}>{flower.instructions}</div>}
           />
-        <CardMedia
-          expandable={true}>
-          <img src={flower.img} alt={flower.commonName} />
-        </CardMedia>
-      <CardActions expandable={true}>
-        <RaisedButton label={`small pot $${flower.priceSmall}`} onClick={this.handleBuySmall.bind(this)}
-        value={flower}
-        />
-      <RaisedButton label={`large pot $${flower.priceLarge}`} onClick={this.handleBuyLarge.bind(this)} value={flower} />
-    </CardActions>
-    <CardText
-      title='Growing Instructions' expandable={true}>
-      {flower.instructions}
-    </CardText>
-  </Card>
+          <Card className='flower-card-details' expandable={true}>
+          <CardMedia>
+            <img src={flower.img} alt={flower.commonName} />
+          </CardMedia>
+          </Card>
+        </Card>
     );
   }
 }
 
 export default FlowerCard;
+
+// <CardText
+//   title='Growing Instructions'/>
+
+// <CardActions>
+// <RaisedButton label={`small pot $${flower.priceSmall}`} onClick={this.handleBuySmall.bind(this)}
+// value={flower}
+// />
+// <RaisedButton label={`large pot $${flower.priceLarge}`} onClick={this.handleBuyLarge.bind(this)} value={flower} />
+// </CardActions>

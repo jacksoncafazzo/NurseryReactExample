@@ -15,7 +15,7 @@ export default class ShoppingCart extends Component {
 
   componentWillMount() {
     let user = firebase.auth().currentUser;
-    const userFlowersRef =  firebase.database().ref('/users/' + user.commonName);
+    const userFlowersRef =  firebase.database().ref('/users/' + user.uid);
     let self = this;
     userFlowersRef.on('value', (snapshot) => {
       self.setState({ userFlowers: snapshot.val() });
@@ -31,7 +31,7 @@ export default class ShoppingCart extends Component {
   //   this.setState({ userFlowers: userFlowersArray });
   // }
 
-  componentWillupdate() {
+  componentWillUpdate() {
     let totalPrice = this.state.totalPrice;
     let flowers = this.state.userFlowers;
     Object.keys(flowers).map((key) => {
@@ -54,7 +54,7 @@ export default class ShoppingCart extends Component {
         </div>
       );
     } else {
-      return (<p>loading...</p>);
+      return (<p>Click buy to add flowers...</p>);
     }
   }
 }

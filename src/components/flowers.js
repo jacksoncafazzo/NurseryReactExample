@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
 import FlowerCard from './flowers-card';
+import { Card, CardHeader } from 'material-ui/Card';
 import { RaisedButton } from 'material-ui/RaisedButton';
 import ShoppingCart from './shoppingCart';
 
@@ -14,8 +15,7 @@ export default class Flowers extends Component {
 
     this.state = {
       premiums: [],
-      userFlowers: [],
-      uid: ''
+      userFlowers: []
     }
   }
 
@@ -54,17 +54,18 @@ export default class Flowers extends Component {
     if (this.state.premiums.length > 0) {
     return (
       <div>
-        <ShoppingCart uid={this.state.uid} />
-        <div className='flowers'>
-        {this.state.premiums.map((flower, i) => {
+
+        <Card className='premiums'>
+          <CardHeader title='Premiums' children={this.state.premiums.map((flower, i) => {
             //console.log('premium', flower);
             return (
-              <FlowerCard flower={flower}
+              <FlowerCard
+                className='flower-card' flower={flower}
               key={'premium' + flower.key}
               />
             );
-          })}
-        </div>
+          })} />
+        </Card>
       </div>
     );
   } else {
@@ -72,3 +73,5 @@ export default class Flowers extends Component {
   }
   }
 }
+
+// <ShoppingCart uid={this.props.user} />

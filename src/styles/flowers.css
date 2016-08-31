@@ -1,14 +1,28 @@
-.flowers {
-  width: 100%;
+.premiums {
+  max-width: 100%;
   display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
+  flex-flow: column wrap;
+  justify-content: flex-end;
   align-items: space-around;
 }
 
 .flower-card {
-  justify-content: left;
-  width: 300px;
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+}
+
+.flower-card-details {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.flower-header {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
 }
 
 .flower-name {
