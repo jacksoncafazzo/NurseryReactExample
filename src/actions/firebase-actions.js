@@ -28,7 +28,3 @@ export function removeUserFlower(key) {
   firebase.database().ref(`users/${user.uid}/${key}`).remove();
   console.log('deleted');
 }
-
-export function saveUserState(state) {
-  firebase.database().ref(`users/${state.user.uid}`).set({ state: state});
-}

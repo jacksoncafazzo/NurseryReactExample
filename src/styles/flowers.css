@@ -15,7 +15,8 @@
 .flower-card-details {
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
+  justify-content: flex-start;
+  align-content: flex-start;
   width: 100%;
 }
 

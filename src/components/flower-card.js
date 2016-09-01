@@ -32,10 +32,6 @@ class FlowerCard extends Component {
       textShadow: '1px 1px 1px black'
     };
 
-    const titleStyles = {
-      fontSize: .6,
-      fontStyle: 'italic'
-    }
 
     let flower = this.props.flower;
     return (
@@ -44,7 +40,7 @@ class FlowerCard extends Component {
           className='flower-header'
           actAsExpander={true}
           showExpandableButton={true}
-          title={flower.commonName}
+          title={<div dangerouslySetInnerHtml={flower.commonName} />}
           titleStyle={{textAlign: 'left'}}
           avatar={flower.img}
           subtitle={flower.variety}
