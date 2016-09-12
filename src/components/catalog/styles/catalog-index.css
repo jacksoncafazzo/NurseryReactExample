@@ -1,0 +1,16 @@
+.index-card {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: flex-start;
+}
+
+.section-card {
+  color: 'red';
+  display: flex;
+  justify-content: flex-start;
+}
+
+.genus-card {
+  display: flex;
+  max-width: '100px';
+}

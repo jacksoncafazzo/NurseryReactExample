@@ -3,7 +3,6 @@ import firebase from 'firebase';
 import { browserHistory } from 'react-router';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import {createUser} from '../../actions/firebase-actions';
 
 class Register extends Component {
   static contextTypes = {
@@ -12,7 +11,6 @@ class Register extends Component {
 
   constructor(props) {
     super(props);
-    console.log('props', props.uid);
     this.state = {
       companyName: '',
       error: false,
@@ -32,18 +30,15 @@ class Register extends Component {
     //Add signup event
     firebase.auth().createUserWithEmailAndPassword(email, pw)
     .then((user) => {
-    let uid = user.uid;
-    console.log(uid)
-      let newUser = {
+      user.updateProfile({
         displayName: companyName,
-        phone: phone,
-        email: email,
-        pw: pw,
-        uid: user.uid
-      }
-      let createUserResult = createUser(newUser);
-      console.log('createUserResult', createUserResult);
-      browserHistory.push('/users/' + uid);
+        photoURL: phone
+      }).then(() => {
+        console.log('Update Success!');
+      }, (error) => {
+        console.log('Error!', error);
+      });
+      browserHistory.push('/users/' + user.uid);
    })
    .catch( self.setState({ error: e.message }) )
 }

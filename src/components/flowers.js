@@ -2,26 +2,22 @@ import React, { Component } from 'react';
 import firebase from 'firebase';
 import FlowerCard from './flower-card';
 import { Card, CardHeader } from 'material-ui/Card';
-import { RaisedButton } from 'material-ui/RaisedButton';
-import ShoppingCart from './shoppingCart';
+//import { RaisedButton } from 'material-ui/RaisedButton';
+//import ShoppingCart from './shoppingCart';
 
 import '../styles/flowers.css';
-
-const premiumsRef = firebase.database().ref('premiums');
 
 export default class Flowers extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      premiums: [],
-      userFlowers: []
+
     }
   }
 
   componentWillMount() {
-    let premiumArray = [];
-    premiumsRef.on('value', (snapshot, error) => {
+    firebase.database().ref().on('value', (snapshot, error) => {
       let premiumResult = snapshot.val();
       Object.keys(premiumResult).map((key1, i) => {
         premiumArray[i] = premiumResult[key1];
@@ -32,8 +28,8 @@ export default class Flowers extends Component {
     });
   }
 
-  componentDidMount() {
-
+  componentWillUnmount() {
+    firebase.database().ref().off('value');
   }
 
   render() {
@@ -46,7 +42,6 @@ export default class Flowers extends Component {
     if (this.state.premiums.length > 0) {
     return (
       <div>
-
         <Card className='premiums'>
           <CardHeader
             title='Premiums'

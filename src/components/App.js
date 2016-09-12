@@ -1,10 +1,13 @@
 import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchUser,logoutUser }  from './actions/firebase_actions';
-import { currentUser } from './utils/local-storage';
+import { Link } from 'react-router';
 
+import { fetchUser, logoutUser } from './actions/firebase_actions';
+import firebase from 'firebase';
+import MenuTabsSwipeable from './menu-tabs';
+import {Tabs, Tab} from 'material-ui/Tabs';
+import SwipeableViews from 'react-swipeable-views';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
@@ -13,27 +16,36 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import Divider from 'material-ui/Divider';
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import BaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 
-import injectTapEventPlugin from 'react-tap-event-plugin';
-injectTapEventPlugin();
+import BannerWide from '../imgs/peoria-banner-wide.jpg';
 
-class NavContainer extends Component {
-  static propTypes = {
-    desktop: PropTypes.func,
-    focusState: PropTypes.func,
-  }
-
+class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      windowWidth: window.innerWidth,
-      mobileNavVisible: false,
-    };
+      currentUser: {},
+      error: '',
+      slideIndex: 0,
+    }
     this.props.fetchUser();
+    this.logOut = this.logOut.bind(this);
   }
 
-  handleResize() {
-    this.setState({windowWidth: window.innerWidth});
+  handleChange(value) {
+    this.setState({ slideIndex: value });
+  }
+
+  logOut() {
+    this.props.logoutUser().then(data => {
+      this.props.fetchUser();
+    });
+  }
+
+  getChildContext() {
+    return { muiTheme: getMuiTheme(BaseTheme) };
   }
 
   componentDidMount() {
@@ -41,7 +53,12 @@ class NavContainer extends Component {
   }
 
   componentWillUnmount() {
+    firebase.auth().onAuthStateChanged();
     window.removeEventListener('resize', this.handleResize.bind(this));
+  }
+
+  handleResize() {
+    this.setState({windowWidth: window.innerWidth});
   }
 
 
@@ -108,30 +125,35 @@ class NavContainer extends Component {
         anchorOrigin={{horizontal: 'right', vertical: 'top'}}
         >
         <MenuItem><Link to='/'>Welcome</Link></MenuItem>
+        <MenuItem><Link to='/update'>Update</Link></MenuItem>
+
         {this.renderUserMenu(this.props.currentUser)}
       </IconMenu>
     );
   }
 
   render() {
-    return(
-      <AppBar
-        title='Peoria Gardens'
-        iconElementLeft={<IconButton><NavigationClose /></IconButton>}
-        iconElementRight={this.renderNavigation()}
-      />
+    return (
+      <MuiThemeProvider>
+      <div className='App'>
+        <img src={BannerWide} alt='Peoria Gardens Inc.' style={{width: '100%'}}/>
+        {this.props.children}
+      </div>
+    </MuiThemeProvider>
     );
   }
+}
+
+App.childContextTypes = {
+  muiTheme: PropTypes.object.isRequired
 }
 
 function mapDispatchToProps(dispatch){
   return  bindActionCreators({ fetchUser, logoutUser }, dispatch);
 }
 
-
-function mapStateToProps(state){
-  return { currentUser : state.currentUser };
+function mapStateToProps({currentUser}){
+  return {currentUser};
 }
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(NavContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -4,14 +4,11 @@ import TextField from 'material-ui/TextField';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
-class AddVariety extends Component {
+class AddSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      section: props.section,
-      genus: props.genus,
-      commonName: props.commonName,
-      variety: '',
+      section: '',
     }
   }
 
@@ -19,17 +16,17 @@ class AddVariety extends Component {
     this.setState({[event.target.name]: event.target.value});
   }
 
-  addVariety(e) {
+  addSection(e) {
     e.preventDefault();
-    let { genus, section, commonName, variety } = this.state;
-    firebase.database().ref(`${section}/${genus}/${commonName}`).push({ name: variety });
+    let { section } = this.state;
+    firebase.database().ref().push({ name: section });
   }
 
   render() {
     return (
-      <form onSubmit={this.addGenus.bind(this)}>
-        <TextField name='genus' floatingLabelText='Add a Genus' onChange={this.handleChange.bind(this)} value={this.state.genus}
-        />
+      <form onSubmit={this.addSection.bind(this)}>
+        <TextField name='section' floatingLabelText='Add New Section' onChange={this.handleChange.bind(this)}
+          value={this.state.section} />
         <FloatingActionButton  type='submit'>
           <ContentAdd />
         </FloatingActionButton>
@@ -38,12 +35,13 @@ class AddVariety extends Component {
   }
 }
 
-AddVariety.propTypes = {
+
+AddSection.propTypes = {
   floatingLabelText: PropTypes.string
 }
 
-AddVariety.contextTypes = {
+AddSection.contextTypes = {
   router: PropTypes.object
 }
 
-export default AddVariety;
+export default AddSection;

@@ -6,17 +6,27 @@
     "babel-eslint": "^6.1.2",
     "eslint-plugin-flowtype": "^2.11.4",
     "eslint-plugin-jsx-a11y": "^2.2.0",
+    "react": "^15.3.1",
     "react-scripts": "0.2.3"
   },
   "dependencies": {
     "firebase": "^3.3.0",
     "material-ui": "^0.15.4",
+    "node-tsv-json": "^0.2.1",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
-    "react-forms": "^2.0.0-beta33",
+    "react-file-input": "^0.2.5",
+    "react-motion": "^0.4.4",
+    "react-redux": "^4.4.5",
+    "react-swipeable-views": "^0.7.3",
     "react-tap-event-plugin": "^1.0.0",
+    "redux": "^3.6.0",
+    "redux-logger": "^2.6.1",
+    "redux-promise": "^0.5.3",
+    "redux-thunk": "^2.1.0",
     "simple-react-form": "^1.6.11",
-    "simple-react-form-material-ui": "^1.6.4"
+    "simple-react-form-material-ui": "^1.6.4",
+    "superagent": "^2.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
