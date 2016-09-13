@@ -26,8 +26,8 @@ class CatalogSearch extends Component {
 
   onFormSubmit(e) {
     e.preventDefault();
-    console.log('u got search', searchRequest)
-    this.setState({ searchRequest: searchRequest }); //this.props.selectSection(this.props.dispatch, this.state.searchRequest);
+    console.log('u got search', this.state.searchRequest)
+    // this.setState({ searchRequest: searchRequest }); //this.props.selectSection(this.props.dispatch, this.state.searchRequest);
   }
 
   handleSearchChange(searchRequest, index) {

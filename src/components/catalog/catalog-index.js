@@ -20,7 +20,7 @@ class CatalogIndex extends Component {
       renderArray: [],
       sectionNames: [],
       searchRequest: '',
-
+      sections: {}
     }
   }
 
@@ -67,114 +67,117 @@ class CatalogIndex extends Component {
   //   return plantSections;
   // }
 
-
-
   componentWillMount() {
-    ref.orderByChild('PRODUCT GROUP')
-      .once('value')
-      .then((snapshot) => {
-        let plants = snapshot.val();
-        let sections = {};
-        let sectionNames = [];
-        let scientificNames = [];
-        let genusNames = [];
-        let varietyNames = [];
-        Object.keys(plants).map((key) => {
-          let plantSection = plants[key]['PRODUCT GROUP'];
-          let plantGenus = plants[key]['Genus'];
-          let plantVariety = plants[key]['Variety 2'];
-          let isInSection = sectionNames.indexOf(plantSection);
-          if (isInSection < 0) {
-            sectionNames.push(plantSection);
-          }
-          genusNames.push(plantGenus.trim());
-          varietyNames.push(plantVariety);
-          if (!sections.hasOwnProperty(plantSection)) {
-            sections[plantSection] = {};
-          }
-          if (!sections[plantSection].hasOwnProperty(plantGenus)) {
-            sections[plantSection][plantGenus] = {};
-          }
-          if (plantVariety === '') {
-            sections[plantSection][plantGenus]['Description'] = plants[key]['Description'];
-          } else {
-            if (!sections[plantSection][plantGenus].hasOwnProperty(plantVariety)) {
-              sections[plantSection][plantGenus][plantVariety] = [plants[key]]
-            } else {
-              sections[plantSection][plantGenus][plantVariety].push(plants[key])
-            }
-          }
+    let {searchRequest} = this.state;
+    this.getPlantsBySection(searchRequest)
+  }
 
+  getPlantsBySection(searchRequest) {
+    let self = this;
+    if (searchRequest.length > 0) {
+      query = ref.orderByChild('Genus')
+        .startAt(searchRequest)
+        .endAt(searchRequest)
+    }
+    if (searchRequest === '') {
+      ref.orderByChild('PRODUCT GROUP')
+        .once('value')
+        .then((snapshot) => {
+          let plants = snapshot.val();
+          let sections = this.state.sections;
+          let sectionNames = [];
+          let scientificNames = [];
+          let genusNames = [];
+          let varietyNames = [];
+          Object.keys(plants).map((key) => {
+            let plantSection = plants[key]['PRODUCT GROUP'];
+            let plantGenus = plants[key]['Genus'].trim();
+            let plantVariety = plants[key]['Variety 2'];
+            let plantGenusVariety = plants[key]['Variety'];
+            let isInSection = Object.keys(sections).includes(plantSection);
+            if (!isInSection) {
+              sections[plantSection] = {}
+              sectionNames.push(plantSection);
 
-          if (isInSection > -1) {
-            let isInGenus = genusNames.indexOf(plantGenus);
-            let isInVariety = varietyNames.indexOf(plantVariety);
-            if (isInGenus < 0) {
-              genusNames.push(plantGenus.trim());
-              sections[sectionNames[isInSection]][plantGenus] = {};
-              if (isInVariety < 0) {
+              if (plantVariety === '' && plantGenusVariety !== '') {
+                genusNames.push(plantGenusVariety);
+                sections[plantSection][plantGenus] = {
+                  Description: plants[key]['Description'],
+                  [plantGenusVariety]: [plants[key]]
+                };
+              }
+              if (plantVariety !== '') {
+                genusNames.push(plantGenus);
+                sections[plantSection][plantGenus] = {
+                  [plantVariety]: [plants[key]]
+                };
                 varietyNames.push(plantVariety);
-                sections[sectionNames[isInSection]][plantGenus][plantVariety] = [plants[key]];
-                // sections[plantSection][plantGenus][plantVariety] = [plants[key]];
+              }
+              // sections[plantSection][plantGenus] = {
+              //   Description: plants[key]['Description'],
+              //   [plantVariety]: [plants[key]]
+              // };
+            }
+
+            if (isInSection) {
+              let isInGenus = false;
+              let isInVariety = false;
+              Object.keys(sections[plantSection]).map((key) => {
+                if (key === plantGenus) {
+                  isInGenus = true;
+                }
+                if (sections[plantSection][key][plantVariety] === plantVariety) {
+                  isInVariety = true;
+                }
+              });
+
+              if (!isInGenus) {
+                genusNames.push(plantGenus);
+                if (!isInVariety && plantVariety === '' && plantGenusVariety !== '') {
+                  varietyNames.push(plantGenusVariety);
+                  sections[plantSection][plantGenus] = {
+                    Description: plants[key]['Description'],
+                    [plantGenusVariety]: [plants[key]]
+                  };
+                }
+                if (!isInVariety && plantVariety !== '') {
+                  varietyNames.push(plantVariety);
+                  sections[plantSection][plantGenus] = {
+                    Description: plants[key]['Description'],
+                    [plantVariety]: [plants[key]]
+                  }
+                }
+              }
+              // self.setState({ sections: sections });
+              if (isInGenus) {
+                // console.log('Variety', plantVariety);
+                // console.log('genusVariety', plantGenusVariety, plants[key]);
+                if (!isInVariety && plantVariety === '' && plantGenusVariety !== '') {
+                  varietyNames.push(plantVariety);
+                  sections[plantSection][plantGenus]['Description'] = plants[key]['Description'];
+                  sections[plantSection][plantGenus][plantGenusVariety] = [plants[key]];
+                }
+                if (!isInVariety && plantVariety !== '') {
+                  varietyNames.push(plantVariety);
+                  sections[plantSection][plantGenus]['Description'] = plants[key]['Description'];
+                  sections[plantSection][plantGenus][plantVariety] = [plants[key]];
+                  // console.log('is in section, genus, not variety', sections)
+                }
+                if (isInVariety && plantVariety === '' && plantGenusVariety !== '') {
+                  sections[plantSection][plantGenus][plantGenuplantGenusVariety].push(plants[key]);
+                }
+                if (isInVariety && plantVariety !== '') {
+                  sections[plantSection][plantGenus][plantVariety].push(plants[key]);
+                }
               }
             }
-            if (isInGenus > -1 && plantVariety === '') {
-              sections[sectionNames[isInSection]][genusNames[isInGenus]]['Description'] = plants[key]['Description'];
-            }
-            if (isInGenus > -1 && plantVariety !== '' && isInVariety > -1) {
-              // console.log('plant', plants[key])
-              // console.log('genusName, varietyName', genusNames[isInGenus], varietyNames[isInVariety])
-              // sections[sectionNames[isInSection]][genusNames[isInGenus]][varietyNames[isInVariety]].push(plants[key]);
-
-            }
-          }
-
-              //
-              // sections[sectionNames[isInSection]][plantGenus][plantVariety].push(plants[key])
-
-              // if (isInVariety > -1) {
-              //   console.log('totes', sections[sectionNames[isInSection]][plantGenus]);
-              //   // .push(plants[key])
-              // }
-              // sections[sectionNames[isInSection]][genusNames[isInGenus]] = {};
-            // }
-            // if (isInGenus > -1) {
-            //   sections[plantSection][plantGenus].push(plants[key]);
-            //
-            // }
-
-
-
-          // if (scientificNames.indexOf(plants[key]['Genus']) < 0) {
-          //   scientificNames.push(plants[key]['Genus']);
-          //   sections[plants[key]['PRODUCT GROUP'][plants[key]['Genus']]] = [plants[key]];
-          // } else {
-          //   sections[plants[key]['PRODUCT GROUP'][plants[key]['Genus']]]
-          // }
-          //
-          // if (scientificNames.indexOf(plant['Genus 2']) < 0) {
-          //   scientificNames.push(plant['Genus 2']);
-          // }
-          // if (scientificNames.indexOf(plant['Variety']) < 0) {
-          //   scientificNames.push(plant['Variety']);
-          // }
-          // this.setState({ sections: sections,  sectionNames: sectionNames, scientificNames: scientificNames });
-        });
-
+          });
           console.log('sectionName', sectionNames, genusNames, varietyNames, sections)
-          this.setState({ sections: sections })
+          self.setState({ sections: sections, genusNames: genusNames });
 
-
-
-      });
+        });
+      }
     }
-
-          // return (<CatalogSection key={key} title={key} section={sections[key]} />);
-
-        // let searchRenderArray = [<CatalogSearch scientificNames={scientificNames} key='catalog-search' />];
-
-// renderArray: searchRenderArray.concat(sectionRenderArray),
-//   console.log('genusNames', genusNames)
   componentDidMount() {
     // const { dispatch, selectedSection } = this.props;
     // dispatch(fetchPlantsIfNeeded(selectedSection))
@@ -193,40 +196,83 @@ class CatalogIndex extends Component {
   }
 
   handleSearchRequest({searchRequest}) {
-    let { sectionNames } = this.state;
-    sectionNames.forEach((sectionName) => {
-      firebase.database().ref(`catalog/${sectionName}`)
-      .orderByChild('Genus')
-      .startAt(searchRequest)
-      .endAt(searchRequest)
-      .on('value', (snapshot) => {
-        //let { sections } = this.state;
-        if (snapshot.val() !== null) {
-          let searchSectionKeys = [];
-          console.log(snapshot.val());
-        let sections = {};
-        Object.keys(snapshot.val()).map((key, i) => {
-          let searchSectionName = snapshot.val()[key]['Name'];
-          if (searchSectionName && searchSectionKeys.indexOf(searchSectionName) < 0) {
-            searchSectionKeys.push(searchSectionName);
-            // sections[searchSectionName] = [snapshot.val()[key]];
+    let { sectionNames, sections } = this.state;
+    let sectionSearchNames = [];
+    let varietySearchNames = [];
+    let searchSections = {};
+    console.log('searchRequest2', searchRequest);
+    Object.keys(sections).map((sectionKey) => {
+      Object.keys(sections[sectionKey]).map((genusKey) => {
+        let plant = sections[sectionKey][genusKey];
+        let plantSection = plant['PRODUCT GROUP'];
+        if (searchRequest === plant['Genus'] && plantSection === sectionKey) {
+          let isInSection = sectionSearchNames.indexOf(plantSection);
+          if (isInSection < 0) {
+            sectionSearchNames.push(plantSection);
+            searchSections[plantSection][plant['Genus']] = {};
           }
-          if (searchSectionKeys.indexOf(searchSectionName) > -1) {
-            console.log('is in section')
-            // sections[searchSectionName].push(snapshot.val()[key]);
-          }
-        });
-        this.setState({
-          sections: {
-            [searchSectionKeys[0]]: snapshot.val()
-          }
-        });
-        console.log('this.state.sections', this.state.sections)
-      }
+          if (isInSection > -1) {
 
+            // searchSections[plantSection][plant['Genus']].push(plant);
+            if (plant['Variety 2'] === null) {
+              searchSections[plantSection][plant['Genus']]['Description'] = plant['Description'];
+            } else {
+              let isInVariety = varietySearchNames.indexOf(plant['Variety 2']);
+              if (isInVariety < 0) {
+                searchSections[plantSection][searchRequest][plant['Variety 2']] = [plant];
+              }
+              if (isInVariety > -1) {
+                searchSections[plantSection][searchRequest][plant['Variety 2']].push(plant);
+              }
+            }
+          } else {
+            console.log('plant doesnt match search');
+          }
+        } else {
+          console.log('boop');
+        }
+
+        this.setState({ sections: searchSections})
       });
     });
+
   }
+    // sectionNames.forEach((sectionName) => {
+    //   firebase.database().ref('catalog')
+    //   .orderByChild('PRODUCT GROUP')
+    //   .startAt(sectionName)
+    //   .endAt(sectionName)
+    //   .on('value', (snapshot) => {
+    //     //let { sections } = this.state;
+    //     console.log('live snap', sectionName, snapshot.val())
+    //     let {searchSectionKeys} = this.state;
+    //     if (snapshot.val() !== null) {
+    //       let sections = {};
+    //       Object.keys(snapshot.val()).map((key, i) => {
+    //         let searchSectionName = snapshot.val()[key]['Name'];
+    //         if (searchSectionName && searchSectionKeys.indexOf(searchSectionName) < 0) {
+    //           searchSectionKeys.push(searchSectionName);
+    //           // sections[searchSectionName] = [snapshot.val()[key]];
+    //         }
+    //         if (searchSectionKeys.indexOf(searchSectionName) > -1) {
+    //           console.log('is in section')
+    //           // sections[searchSectionName].push(snapshot.val()[key]);
+    //         }
+    //       });
+    //       this.setState({
+    //         sections: {
+    //           [searchSectionKeys[0]]: snapshot.val()
+    //         }
+    //       });
+    //     console.log('this.state.sections', this.state.sections)
+    //   } else {
+    //     console.log('null snap', sectionName);
+    //
+    //   }
+
+  //     });
+  //   });
+  // }
 
   render() {
     // const { dispatch, selectedSection, plants, isFetching } = this.props;

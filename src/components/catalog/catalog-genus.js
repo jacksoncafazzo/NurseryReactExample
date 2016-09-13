@@ -3,20 +3,20 @@ import { Card, CardHeader, CardTitle, CardText } from 'material-ui/Card';
 // import CatalogGenus2 from './catalog-genus2.js';
 import './styles/catalog-index.css';
 import Toggle from 'material-ui/Toggle';
-import firebase from 'firebase';
+import CatalogVariety from './catalog-variety';
 
 export default class CatalogGenus extends Component {
   constructor(props) {
     super(props);
+    let {genus, title} = this.props;
+    let genusKeys = Object.keys(genus);
+    let subtitle = `${title} ${genusKeys[0]}`
     this.state = {
-      varietyExpanded: false,
-      section: this.props.section,
-      title: this.props.title,
-      subtitle: this.props.subtitle,
-      description: this.props.description,
-      genusRef: {},
-      varities: [],
-      varietyRenderArray: []
+      varietyExpanded: true,
+      genus: genus,
+      title: title,
+      subtitle: subtitle,
+      description: genus['Description'],
     }
   }
 
@@ -148,28 +148,40 @@ export default class CatalogGenus extends Component {
   // }
 
   render() {
-    let { title, subtitle, description } = this.state;
-    let { hasMultiples } = this.props;
-    if (hasMultiples) {
-      console.log('has mults', title, description, subtitle);
-    } else {
-      console.log('no has mults');
-    }
-    let { genusRenderArray } = this.state;
+    let { genus, title, subtitle, description } = this.state;
+    console.log('genusRender', genus)
+    // let { hasMultiples } = this.props;
+    // if (hasMultiples) {
+    //   console.log('has mults', title, description, subtitle);
+    // } else {
+    //   console.log('no has mults');
+    // }
+    // let { genusRenderArray } = this.state;
     return (
-      <Card key={title}  onExpandChange={this.handleExpandChange.bind(this)} className='plant-card'>
-        <CardHeader title={<CardTitle title={title}
-          subtitle={subtitle}
+      <Card key={title}
+        expanded={this.state.varietyExpanded}onExpandChange={this.handleExpandChange.bind(this)} className='plant-card'>
+        <CardHeader title={<CardTitle     title={title}
+
           actAsExpander={true}
           children={<Toggle
             toggled={this.state.varietyExpanded}
             onToggle={this.handleToggle.bind(this)}
             labelPosition='left'
-            label={description}
+            label={genus['Description']}
             />}
             />} />
-          {(genusRenderArray) ? genusRenderArray : null}
-      </Card>
-    );
+          {(Object.keys(genus).length > 1) ? Object.keys(genus).map((key, i) => {
+            if (key !== 'Description') {
+            genus[key].forEach((variety, i) => {
+              console.log('sendingVariety')
+              return <CatalogVariety variety={variety} key={i} expandable={true} />
+            });
+            }
+          }) : null}
+        </Card>
+      );
+    }
   }
-}
+
+//   <CatalogVariety variety={variety} key={i} title={key} expandable={true} />
+// }): null}

@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardText, CardMedia } from 'material-ui/Ca
 
 
 export default class CatalogVariety extends Component {
+
   render() {
     let { variety } = this.props;
     console.log('variety render', variety);
@@ -12,17 +13,14 @@ export default class CatalogVariety extends Component {
     //     varietiesArray.push(<CatalogVariety key={key} common={genus[key]} />)
     //   }
     // });
-    if (variety) {
-      return (
-        <Card key={variety.key}
-          expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>
-            <CardHeader title={<CardTitle title={title}
-              actAsExpander={true}
-              showExpandableButton={true} /> } />
-        </Card>
-      );
-    } else {
-      return null
-    }
+    return (
+      <Card key={variety.key} >
+        <CardHeader title={<CardTitle title={title}
+          /> } />
+        <CardText>{variety['GROWPOINT ITEMDESC']}</CardText>
+      </Card>
+    );
+
+
   }
 }
