@@ -1,52 +1,76 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardText } from 'material-ui/Card';
-import TextField from 'material-ui/TextField';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Search from 'material-ui/svg-icons/action/search'
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { selectSection, getAllSectionsWithNames } from '../actions/firebase_actions';
+
 import AutoComplete from 'material-ui/AutoComplete';
 
-import './styles/catalog-index.css';
+import '../../styles/catalog-index.css';
 
-class CatalogSearch extends Component {
+export default class CatalogSearch extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      searchRequest: ''
+      sectionSearchRequest: '',
+      genusSearchRequest: '',
+      sciNameSearchRequest: ''
     }
 
   }
 
-  onInputChange(searchRequest, dataSource) {
-    this.setState({ searchRequest: searchRequest });
+  onSectionInputChange(searchRequest, dataSource) {
+    this.setState({ sectionSearchRequest: searchRequest });
+  }
+
+  onGenusInputChange(searchRequest, dataSource) {
+    this.setState({ genusSearchRequest: searchRequest });
+  }
+
+  onSciNameInputChange(searchRequest, dataSource) {
+    this.setState({ sciNameSearchRequest: searchRequest });
   }
 
   onFormSubmit(e) {
     e.preventDefault();
-    console.log('u got search', this.state.searchRequest)
+    console.log('u got search', this.state.searchRequest);
+    // this.props.handleSearchRequest( {searchRequest: e.target.value});
     // this.setState({ searchRequest: searchRequest }); //this.props.selectSection(this.props.dispatch, this.state.searchRequest);
   }
 
-  handleSearchChange(searchRequest, index) {
-    let genusNames = this.props.genusNames;
-    //console.log('searchRequest', genusNames[index]);
-    this.props.handleSearchRequest( {searchRequest: genusNames[index]});
-    //this.setState({searchRequest: ''});
+  handleSciNameSearchChange(searchRequest, index) {
+    let scientificNames = this.props.scientificNames;
+    this.props.handleSearchRequest( {sciNameSearchRequest: scientificNames[index]});
+  }
 
+  handleSectionSearchChange(searchRequest, index) {
+    let sectionNames = this.props.sectionNames;
+    this.props.handleSearchRequest( {sectionSearchRequest: sectionNames[index]});
+  }
+
+  handleGenusSearchChange(searchRequest, index) {
+    let genusNames = this.props.genusNames;
+    this.props.handleSearchRequest({genusSearchRequest: genusNames[index]});
   }
 
   render() {
     let self = this;
     return (
-      <form onSubmit={this.onFormSubmit}>
-        <AutoComplete name='searchRequest' floatingLabelText='Search for a plant name'
+      <form onSubmit={this.onFormSubmit.bind(this)}>
+        <AutoComplete name='sectionRequest' floatingLabelText='Search for a plant by section'
+          filter={AutoComplete.caseInsensitiveFilter}
+          dataSource={this.props.sectionNames}
+          onUpdateInput={this.onSectionInputChange.bind(this)} onNewRequest={self.handleSectionSearchChange.bind(this)}
+          value={this.state.sectionSearchRequest} />
+        <AutoComplete name='genusRequest' floatingLabelText='Search for a plant by name'
           filter={AutoComplete.caseInsensitiveFilter}
           dataSource={this.props.genusNames}
-          onUpdateInput={this.onInputChange.bind(this)} onNewRequest={self.handleSearchChange.bind(this)}
-          value={this.state.searchRequest} />
+          onUpdateInput={this.onGenusInputChange.bind(this)} onNewRequest={self.handleGenusSearchChange.bind(this)}
+          value={this.state.genusSearchRequest} />
+        <AutoComplete name='sciNameRequest' floatingLabelText='Search for a plant by variety'
+          filter={AutoComplete.caseInsensitiveFilter}
+          dataSource={this.props.scientificNames}
+          onUpdateInput={this.onSciNameInputChange.bind(this)} onNewRequest={self.handleSciNameSearchChange.bind(this)}
+          value={this.state.sciNameSearchRequest} />
         <FloatingActionButton type='submit'>
           <Search />
         </FloatingActionButton>
@@ -54,9 +78,3 @@ class CatalogSearch extends Component {
     );
   }
 }
-
-function mapDispatchToProps(dispatch, state) {
-  return bindActionCreators({ selectSection }, dispatch);
-}
-
-export default connect(null, mapDispatchToProps)(CatalogSearch);

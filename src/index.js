@@ -7,13 +7,14 @@ import thunk from 'redux-thunk';
 import ReduxPromise from 'redux-promise';
 import createLogger from 'redux-logger';
 
-import injectTapEventPlugin from 'react-tap-event-plugin';
-injectTapEventPlugin();
-
 import rootReducer from './components/reducers';
 
 import './index.css';
 import routes from './routes';
+
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
+
 
 const logger = createLogger();
 

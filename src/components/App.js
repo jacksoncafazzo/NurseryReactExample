@@ -5,22 +5,23 @@ import { Link } from 'react-router';
 
 import { fetchUser, logoutUser } from './actions/firebase_actions';
 import firebase from 'firebase';
-import MenuTabsSwipeable from './menu-tabs';
-import {Tabs, Tab} from 'material-ui/Tabs';
-import SwipeableViews from 'react-swipeable-views';
-import AppBar from 'material-ui/AppBar';
+
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
+
 import Divider from 'material-ui/Divider';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import BaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
+import pgTheme from '../styles/pg-theme.js';
 
-import BannerWide from '../imgs/peoria-banner-wide.jpg';
+
+import MenuTabsSwipeable from './menu-tabs';
+
+
+import BannerWide from '../imgs/bannerPG.gif';
 
 class App extends Component {
   constructor(props) {
@@ -45,7 +46,7 @@ class App extends Component {
   }
 
   getChildContext() {
-    return { muiTheme: getMuiTheme(BaseTheme) };
+    return { muiTheme: getMuiTheme(pgTheme)};
   }
 
   componentDidMount() {
@@ -134,9 +135,10 @@ class App extends Component {
 
   render() {
     return (
-      <MuiThemeProvider>
+      <MuiThemeProvider muiTheme={getMuiTheme(pgTheme)}>
       <div className='App'>
         <img src={BannerWide} alt='Peoria Gardens Inc.' style={{width: '100%'}}/>
+        <MenuTabsSwipeable user={this.state.currentUser} />
         {this.props.children}
       </div>
     </MuiThemeProvider>

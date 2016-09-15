@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import tsv from 'node-tsv-json';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import FileCloudUpload from 'material-ui/svg-icons/file/cloud-upload';
-import FileInput from 'react-file-input';
 import fs from 'fs';
 
 export default class UpdateCatalog extends Component {

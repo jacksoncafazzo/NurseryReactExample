@@ -1,0 +1,36 @@
+.catalog-index {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.sidebar {
+  width: 25%;
+  display: flex;
+  flex-flow: row wrap;
+  max-width: 200px;
+}
+
+.section-tabs {
+  display: flex;
+  flex-flow: row wrap;
+  margin-right: 10px;
+}
+
+.index-card {
+  width: 75%;
+  padding-left: 15px;
+  /*display: flex;
+  flex-flow: column wrap;
+  justify-content: flex-start;*/
+}
+
+.section-card {
+  color: 'red';
+  display: flex;
+  justify-content: flex-start;
+}
+
+.genus-card {
+  display: flex;
+  max-width: '100px';
+}

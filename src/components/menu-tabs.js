@@ -1,11 +1,15 @@
 import React from 'react';
+import Radium from 'radium';
 import {Tabs, Tab} from 'material-ui/Tabs';
 // From https://github.com/oliviertassinari/react-swipeable-views
 import SwipeableViews from 'react-swipeable-views';
 import Home from './home';
 import Personnel from './personnel';
 import CatalogIndex from './catalog/catalog-index';
-import CatalogSearch from './catalog/catalog-search'
+import WholesaleCustomers from './wholesale-customers';
+
+import { colors } from 'material-ui/styles';
+
 
 const styles = {
   contactSlide: {
@@ -15,10 +19,22 @@ const styles = {
   plantsSlide: {
     padding: 'auto',
     textAlign: 'left'
+  },
+  default_tab:{
+    color: colors.white,
+    backgroundColor: colors.green500,
+    fontWeight: 400,
+  },
+  active_tab:{
+    color: colors.yellowA200,
+    borderColor: colors.yellowA200
+  },
+  inkBarStyle: {
+    background: colors.amber500
   }
 };
 
-export default class MenuTabsSwipeable extends React.Component {
+class MenuTabsSwipeable extends React.Component {
 
   constructor(props) {
     super(props);
@@ -27,42 +43,62 @@ export default class MenuTabsSwipeable extends React.Component {
     };
   }
 
+  componentWillMount() {
+
+  }
+
   handleChange = (value) => {
     this.setState({
       slideIndex: value,
     });
   };
 
+  handleWholesale = (e) => {
+    console.log(e.target);
+  }
+
   render() {
+    let styles= {
+      tab: {
+        background: [
+        `linear-gradient(${colors.lightGreen500}, ${colors.green500})`
+        ,
+        colors.lightGreen500
+        ],
+        fontWeight: 400
+      },
+
+    }
     return (
       <div>
         <Tabs
           onChange={this.handleChange}
           value={this.state.slideIndex}
+          tabItemContainerStyle={styles.tab}
         >
           <Tab label='Home' value={0} />
           <Tab label='About' value={1} />
-          <Tab label='Wholesale Lists' value={2} />
-          <Tab label='Plants' value={3} />
+          <Tab label='Plants' value={2} />
+          <Tab label='Wholesale' value={3} onClick={this.handleWholesale} />
           <Tab label='Contact' value={4} />
         </Tabs>
         <SwipeableViews
           index={this.state.slideIndex}
           onChangeIndex={this.handleChange}
         >
-          <div className='home'>
+          <div className='home' >
             <Home />
           </div>
-          <div className='about' style={styles.slide}>
-            <h2>about</h2>
+          <div className='about'>
+            about
           </div>
-          <div className='wholesale-lists' style={styles.slide}>
-            <h1>listsssss</h1>
-          </div>
-          <div style={styles.plantsSlide}>
+          <div>
             <CatalogIndex />
           </div>
-          <div className='contact' style={styles.contactSlide}>
+          <div className='wholesale-lists' >
+            <WholesaleCustomers />
+          </div>
+          <div className='contact'>
             <Personnel />
             <h5>For wholesale information, please contact us at:
             </h5>
@@ -76,3 +112,5 @@ export default class MenuTabsSwipeable extends React.Component {
     );
   }
 }
+
+export default Radium(MenuTabsSwipeable);

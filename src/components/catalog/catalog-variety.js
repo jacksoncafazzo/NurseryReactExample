@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardTitle, CardText, CardMedia } from 'material-ui/Card';
+import { Card, CardHeader, CardTitle, CardText } from 'material-ui/Card';
 
 
 export default class CatalogVariety extends Component {
 
   render() {
-    let { variety } = this.props;
+    let { variety, title } = this.props;
     console.log('variety render', variety);
     // let varietiesArray = [];
     // Object.keys(genus).map((key, i) => {
@@ -14,11 +14,9 @@ export default class CatalogVariety extends Component {
     //   }
     // });
     return (
-      <Card key={variety.key} >
-        <CardHeader title={<CardTitle title={title}
-          /> } />
-        <CardText>{variety['GROWPOINT ITEMDESC']}</CardText>
-      </Card>
+      <div>
+        ima variety
+      </div>
     );
 
 
