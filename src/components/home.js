@@ -23,12 +23,6 @@ class Home extends Component {
     }
   }
 
-  componentWillMount() {
-    firebase.storage().ref().child('2016 Catalog.pdf').getDownloadURL().then((url) => {
-      this.setState({catalogDownload: url})
-    });
-  }
-
   render() {
     const styles = {
       div:{
@@ -130,17 +124,6 @@ class Home extends Component {
           <CardText>Our greenhouses, located in the fertile Willamette Valley, grow high quality young plants for today's sophisticated gardens.</CardText>
           <CardText>Our lists also include grasses, ground covers, fall chrysanthemums, ornamental kale and poinsettias.</CardText>
         </Card>
-
-        <Card style={styles.card}>
-          <CardMedia style={{margin: 20}} overlay={<CardTitle
-              title='2016 Catalog'
-              subtitle='Wholesale Only' titleStyle={{fontSize: 20}} />}>
-              <img src={frontOfCatalog} alt='catalog cover' />
-            </CardMedia>
-            <CardActions>
-              <a href={this.state.catalogDownload}><RaisedButton label='Download 2016 Catalog' style={{marginLeft: '10%', marginRight: '10%'}}/></a>
-            </CardActions>
-          </Card>
         </div>
       );
     }
