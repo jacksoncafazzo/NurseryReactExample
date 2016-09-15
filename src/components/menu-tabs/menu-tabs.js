@@ -5,7 +5,7 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import SwipeableViews from 'react-swipeable-views';
 import Home from './home';
 import Personnel from './personnel';
-import CatalogIndex from './catalog/catalog-index';
+import CatalogIndex from '../catalog/catalog-index';
 import WholesaleCustomers from './wholesale-customers';
 
 import { colors } from 'material-ui/styles';
@@ -39,7 +39,7 @@ class MenuTabsSwipeable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      slideIndex: 0,
+      slideIndex: this.props.slideIndex,
     };
   }
 
@@ -51,6 +51,7 @@ class MenuTabsSwipeable extends React.Component {
     this.setState({
       slideIndex: value,
     });
+    this.props.handleMenuChange(value);
   };
 
   handleWholesale = (e) => {

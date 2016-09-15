@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-import { FIREBASE_CONFIG } from '../../config';
+import { FIREBASE_CONFIG } from '../../../config';
 
 import {
   currentUserPromise,

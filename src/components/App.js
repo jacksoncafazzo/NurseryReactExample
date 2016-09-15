@@ -16,10 +16,9 @@ import Divider from 'material-ui/Divider';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import pgTheme from '../styles/pg-theme.js';
+import Footer from './footer';
 
-
-import MenuTabsSwipeable from './menu-tabs';
-
+import MenuTabsSwipeable from './menu-tabs/menu-tabs';
 
 import BannerWide from '../imgs/bannerPG.gif';
 
@@ -33,6 +32,7 @@ class App extends Component {
     }
     this.props.fetchUser();
     this.logOut = this.logOut.bind(this);
+    this.handleMenuChange = this.handleMenuChange.bind(this);
   }
 
   handleChange(value) {
@@ -77,6 +77,10 @@ class App extends Component {
     }
   }
 
+  handleMenuChange(slideIndex) {
+    this.setState({ slideIndex });
+  }
+
   renderLoginOrLogout() {
     if (this.props.currentUser && this.props.currentUser.uid) {
       return (
@@ -115,7 +119,6 @@ class App extends Component {
          <MenuItem key={1}><Link to='/login'>Login</Link></MenuItem>,
          <MenuItem key={2}><Link to='/register'>Register</Link></MenuItem>
       ]
-
   }
 
   renderNavigation() {
@@ -138,8 +141,9 @@ class App extends Component {
       <MuiThemeProvider muiTheme={getMuiTheme(pgTheme)}>
       <div className='App'>
         <img src={BannerWide} alt='Peoria Gardens Inc.' style={{width: '100%'}}/>
-        <MenuTabsSwipeable user={this.state.currentUser} />
+        <MenuTabsSwipeable user={this.state.currentUser} slideIndex={this.state.slideIndex} handleMenuChange={this.handleMenuChange} />
         {this.props.children}
+        <Footer slideIndex={this.state.slideIndex} handleMenuChange={this.handleMenuChange} />
       </div>
     </MuiThemeProvider>
     );

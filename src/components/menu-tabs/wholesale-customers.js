@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
+
 import {Card, CardHeader, CardTitle, CardMedia, CardText,CardActions } from 'material-ui/Card';
-import PeoriaMap from '../imgs/peoriamap.gif';
-import frontOfCatalog from '../imgs/2016FrontCover.jpg';
-import GoogleMap from './google-map';
 import RaisedButton from 'material-ui/RaisedButton';
-import pgCrew from '../imgs/PeoriaPersonnel20Apr15.jpg';
+
+import GoogleMap from './google-map';
+
+import PeoriaMap from '../../imgs/peoriamap.gif';
+import frontOfCatalog from '../../imgs/2016FrontCover.jpg';
+import pgCrew from '../../imgs/PeoriaPersonnel20Apr15.jpg';
 
 export default class WholesaleCustomers extends Component {
   constructor(props) {
@@ -39,8 +42,8 @@ export default class WholesaleCustomers extends Component {
         justifyContent: 'center'
       },
       cardImage: {
-        marginLeft: '10%',
-        marginRight: '10%'
+        marginLeft: '5%',
+        marginRight: '5%'
       },
       mapImage: {
         margin: '20%',
@@ -64,14 +67,14 @@ export default class WholesaleCustomers extends Component {
           <CardText style={styles.title}>
             <h3>We welcome our wholesale customers to come by and visit us!</h3>
           </CardText>
-          <CardMedia style={styles.cardImage}>
-            <img src={pgCrew} />
-          </CardMedia>
           <CardText>
             We are open<br />
           8 am to 4 pm<br />
         Monday through Friday.<br />
           </CardText>
+          <CardMedia style={styles.cardImage}>
+            <img src={pgCrew} />
+          </CardMedia>
         </Card>
           <Card style={styles.card}>
           <CardMedia style={styles.mapImage}>
@@ -100,9 +103,6 @@ export default class WholesaleCustomers extends Component {
             <a href={this.state.catalogDownload}><RaisedButton label='Download 2016 Catalog' style={{marginLeft: '10%', marginRight: '10%'}} primary={true}/></a>
           </CardActions>
         </Card>
-
-        <GoogleMap />
-
       </div>
     );
   }

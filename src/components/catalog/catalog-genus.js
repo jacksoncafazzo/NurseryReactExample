@@ -57,7 +57,8 @@ export default class CatalogGenus extends Component {
         paddingLeft: 10
       },
       subtitle: {
-        color: 'black'
+        color: 'black',
+        fontStyle: 'italic'
       },
 
     }

@@ -4,5 +4,6 @@ module.exports = {
       authDomain: 'peoria-gardens.firebaseapp.com',
       databaseURL: 'https://peoria-gardens.firebaseio.com',
       storageBucket: 'peoria-gardens.appspot.com',
+      messagingSenderId: '1092583224518'
     }
 };
