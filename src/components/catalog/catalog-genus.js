@@ -9,24 +9,15 @@ import RaisedButton from 'material-ui/RaisedButton';
 import ImageEdit from 'material-ui/svg-icons/image/edit';
 
 export default class CatalogGenus extends Component {
-  constructor(props) {
-    super(props);
-    let {genus, title, description} = this.props;
-    this.state = {
-      genusExpanded: false,
-      genus: genus,
-      title: title,
-      description: description,
-    }
-  }
 
-  handleExpandChange(genusExpanded) {
-    this.setState({ genusExpanded: genusExpanded});
-  };
-
-  handleGenusToggle(event, toggle) {
-    this.setState({ genusExpanded: toggle });
-  };
+  //
+  // handleExpandChange(expanded) {
+  //   this.setState({ expanded: expanded});
+  // };
+  //
+  // handleGenusToggle(event, toggle) {
+  //   this.setState({ expanded: toggle });
+  // };
 
   renderColor(colors) {
     let colorsLength = Object.keys(colors).length
@@ -43,12 +34,15 @@ export default class CatalogGenus extends Component {
     return renderArray;
   }
 
-  handleEditImage(e) {
-
-  }
-
   render() {
-    let { genus, title, description } = this.props;
+    let { genus, title } = this.props;
+    let { subtitle, Description, key, varieties } = genus;
+    let plantKey = key;
+    let avatar = Object.keys(varieties).map((key, i) => {
+      if (i === 0) {
+        return varieties[key].img
+      }
+    });
     let styles = {
       thumb: {
         width: 80,
@@ -63,29 +57,27 @@ export default class CatalogGenus extends Component {
 
     }
     return (
-      <Card key={title}
-        expanded={this.state.genusExpanded} onExpandChange={this.handleExpandChange.bind(this)} className='plant-card'>
-        {(genus['img']) ? <img style={styles.thumb} src={genus['img']} alt={`${genus['Genus 2']} ${genus['Variety 2']}`} /> : null}
+      <Card className='genus-card'>
         <CardHeader title={<CardTitle
-          title={`${genus['Genus']} ${genus['Variety 2']}`}
-          subtitle={`${genus['Genus 2']} ${genus['Variety 2']}`}
+          title={title}
+          subtitle={Description}
           subtitleStyle={styles.subtitle}
-            />}
-            actAsExpander={true}
-            subtitle={description}
-            />
-          <CardText expandable={true}>{genus['GROWPOINT ITEMDESC']}
-            {(genus['img']) ? <CardMedia expandable={true} overlay={<CardTitle title={`${genus['Genus 2']} ${genus['Variety 2']}`} />} >
-              <img src={genus['img']} alt={title} />
-            </CardMedia> : null }
-            <CardActions expandable={true}>
-              <AddImage plant={genus} />
-            </CardActions>
-          </CardText>
+          />}
+          actAsExpander={true}
+          showExpandableButton={true}
+          avatar={avatar[0]}
+          />
+        {Object.keys(varieties).map((key, i) => {
+          {(varieties[key].img) ? <img style={styles.thumb} src={varieties[key].img} alt={varieties[key].scientificName} /> : null}
+        })}
+        <CardText expandable={true}>
+        {(varieties) ? Object.keys(varieties).map((key, i) => {
+          let variety = varieties[key];
+          return (<CatalogVariety variety={variety} varietyName={key} key={i} styles={styles} />)
+        }) : <div>varieties loading</div>}
+        </CardText>
+
         </Card>
       );
     }
   }
-
-//   <CatalogVariety variety={variety} key={i} title={key} expandable={true} />
-// }): null}

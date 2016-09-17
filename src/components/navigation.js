@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchUser,logoutUser }  from './actions/firebase_actions';
 import { currentUser } from './utils/local-storage';
+import MenuTabsSwipeable from './menu-tabs/menu-tabs';
 
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
@@ -12,10 +13,6 @@ import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import Divider from 'material-ui/Divider';
-
-
-import injectTapEventPlugin from 'react-tap-event-plugin';
-injectTapEventPlugin();
 
 class NavContainer extends Component {
   static propTypes = {
@@ -60,7 +57,7 @@ class NavContainer extends Component {
   }
 
   renderLoginOrLogout() {
-    if (this.props.currentUser && this.props.currentUser.uid) {
+    if (this.props.user && this.props.user.uid) {
       return (
         <MenuItem key={4}>
           <Link to='/logout' onClick={this.props.logOut}>Logout</Link>
@@ -117,6 +114,7 @@ class NavContainer extends Component {
     return(
       <AppBar
         title='Peoria Gardens'
+        children={<MenuTabsSwipeable />}
         iconElementLeft={<IconButton><NavigationClose /></IconButton>}
         iconElementRight={this.renderNavigation()}
       />

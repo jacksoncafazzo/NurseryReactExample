@@ -15,7 +15,6 @@ import routes from './routes';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
-
 const logger = createLogger();
 
 function createStoreWithMiddleware(rootReducer, previousState) {

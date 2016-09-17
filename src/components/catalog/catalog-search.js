@@ -38,37 +38,42 @@ export default class CatalogSearch extends Component {
   }
 
   handleSciNameSearchChange(searchRequest, index) {
-    let scientificNames = this.props.scientificNames;
+    let catalogKeys = this.props;
+    let { scientificNames } = catalogKeys;
     this.props.handleSearchRequest( {sciNameSearchRequest: scientificNames[index]});
   }
 
   handleSectionSearchChange(searchRequest, index) {
-    let sectionNames = this.props.sectionNames;
+    let catalogKeys = this.props;
+    let { sectionNames } = catalogKeys;
     this.props.handleSearchRequest( {sectionSearchRequest: sectionNames[index]});
   }
 
   handleGenusSearchChange(searchRequest, index) {
-    let genusNames = this.props.genusNames;
+    let catalogKeys = this.props;
+    let { genusNames } = catalogKeys;
     this.props.handleSearchRequest({genusSearchRequest: genusNames[index]});
   }
 
   render() {
     let self = this;
+    let { catalogKeys } = this.props;
+    let { sectionNames, genusNames, scientificNames } = catalogKeys;
     return (
       <form onSubmit={this.onFormSubmit.bind(this)}>
         <AutoComplete name='sectionRequest' floatingLabelText='Search for a plant by section'
           filter={AutoComplete.caseInsensitiveFilter}
-          dataSource={this.props.sectionNames}
+          dataSource={sectionNames}
           onUpdateInput={this.onSectionInputChange.bind(this)} onNewRequest={self.handleSectionSearchChange.bind(this)}
           value={this.state.sectionSearchRequest} />
         <AutoComplete name='genusRequest' floatingLabelText='Search for a plant by name'
           filter={AutoComplete.caseInsensitiveFilter}
-          dataSource={this.props.genusNames}
+          dataSource={genusNames}
           onUpdateInput={this.onGenusInputChange.bind(this)} onNewRequest={self.handleGenusSearchChange.bind(this)}
           value={this.state.genusSearchRequest} />
         <AutoComplete name='sciNameRequest' floatingLabelText='Search for a plant by variety'
           filter={AutoComplete.caseInsensitiveFilter}
-          dataSource={this.props.scientificNames}
+          dataSource={scientificNames}
           onUpdateInput={this.onSciNameInputChange.bind(this)} onNewRequest={self.handleSciNameSearchChange.bind(this)}
           value={this.state.sciNameSearchRequest} />
         <FloatingActionButton type='submit'>

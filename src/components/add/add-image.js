@@ -23,7 +23,7 @@ class AddImage extends Component {
   }
 
   uploadImageAndUpdate(img) {
-    let { plant } = this.props;
+    let { plant, varietyName } = this.props;
     // we need to make a reference to storage:
     const storageRef = firebase.storage().ref();
 
@@ -46,23 +46,40 @@ class AddImage extends Component {
     }, (error) => {
       console.log('unsuccessful upload', error.message);
     }, () => {
+      //upload successful!
+      //get downloadURL
+      let downloadURL = imageUploadTask.snapshot.downloadURL;
+
 
       //get plant ref in database
-      ref.orderByChild('Variety 2').startAt(plant['Variety 2']).endAt(plant['Variety 2']).once('value', (snapshot) => {
+      //ref is 'catalog'
+      ref.orderByChild('Variety').startAt(varietyName).endAt(varietyName).once('value', (snapshot) => {
         let plants = snapshot.val();
+        if (plants) {
+          //snapshot is not null
+          console.log(plants, imageUploadTask.snapshot)
+          Object.keys(plants).map((key) => {
+            //update object in database
+            ref.child(key).update({ img: downloadURL });
+          });
 
-        //get downloadURL
-        let downloadURL = imageUploadTask.snapshot.downloadURL;
-        Object.keys(plants).map((key) => {
-          if (plants[key]['Genus'] === plant['Genus']) {
-            plants[key]['img'] = downloadURL;
-          }
-        });
-
-        //update objects in database
-        ref.update(plants);
-        console.log('you uploaded the file!', plant);
+          console.log('you uploaded the file!', plant);
+        } else {
+          // query for variety failed, search for Variety 2
+          ref.orderByChild('Variety 2').startAt(varietyName).endAt(varietyName).once('value', (snapshot) => {
+            let plants = snapshot.val();
+            if (!plants) {
+              console.log('i dont know what u did, man, but it aint working');
+            } else {
+              Object.keys(plants).map((key) => {
+                plant['img'] = downloadURL;
+              });
+            }
+          });
+          // other query ends
+        }
       });
+      //first query ends
     });
 
     // remember that while the file names are the same, the references point to different files
@@ -71,7 +88,7 @@ class AddImage extends Component {
 
   addImage(e) {
     e.preventDefault();
-    console.log('addd', e.target.img.files[0]);
+    console.log('adding: ', e.target.img.files[0]);
     this.uploadImageAndUpdate(e.target.img.files[0]);
   }
 
@@ -89,7 +106,7 @@ class AddImage extends Component {
 
     return (
       <form onSubmit={this.addImage.bind(this)}>
-        <input label={<ImageEdit />} type='file' accept='*.png' id='img' onChange={this.handleChange.bind(this)} />
+        <input label={`Change image ${<ImageEdit />}`} type='file' accept='*.png' id='img' onChange={this.handleChange.bind(this)} />
         <RaisedButton
           label='Change db entry'
           style={styles.button}

@@ -1,23 +1,18 @@
 .catalog-index {
   display: flex;
   flex-flow: row wrap;
+  justify-content: flex-end;
 }
 
-.sidebar {
-  width: 25%;
+.section-tabs-container {
   display: flex;
   flex-flow: row wrap;
-  max-width: 200px;
-}
-
-.section-tabs {
-  display: flex;
-  flex-flow: row wrap;
-  margin-right: 10px;
+  width: 100%;
 }
 
 .index-card {
-  width: 75%;
+  width: 100%;
+  margin: 1%;
   padding-left: 15px;
   /*display: flex;
   flex-flow: column wrap;

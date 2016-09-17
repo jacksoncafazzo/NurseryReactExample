@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Card, CardMedia, CardText, CardHeader, CardTitle, CardActions } from 'material-ui/Card';
 import Paper from 'material-ui/Paper';
 import { GridList, GridTile } from 'material-ui/GridList';
+import Radium from 'radium';
+import {colors} from 'material-ui/styles';
 
 import NoGmo from '../../imgs/NonGMOnNeonicFree.gif';
 import AirPhoto from '../../imgs/AirPhoto.jpg';
@@ -49,13 +51,6 @@ class Home extends Component {
       }
     ]
     const styles = {
-      div:{
-        display: 'flex',
-        flexFlow: 'row wrap',
-        justifyContent: 'space-around',
-        padding: 20,
-        width: '100%'
-      },
       topCard: {
         flex: 1,
         height: '100%',
@@ -63,44 +58,22 @@ class Home extends Component {
         textAlign: 'left',
         padding: 10,
         maxWidth: 500,
-        fontSize: 18
+        fontSize: 18,
       },
-      cardLeft:{
-        flex: 1,
-        height: '100%',
-        margin: 10,
-        textAlign: 'center',
-        padding: 10
-      },
-      cardRight:{
-        height: 600,
-        flex: 4,
-        margin: 10,
-        textAlign: 'center',
-      },
-      headline: {
-        fontSize: 22,
-        marginRight: 20,
-        marginBottom: 12,
-        fontWeight: 400,
-      },
-      paper: {
-        height: 'auto',
-        width: '25%',
-        margin: 20,
-        textAlign: 'center',
-        display: 'inline-block',
-      },
+      // paper: {
+      //   height: 'auto',
+      //   width: '25%',
+      //   margin: 20,
+      //   textAlign: 'center',
+      //   display: 'inline-block',
+      // },
       noGmo: {
         width: 120,
         alignSelf: 'center',
         float: 'left',
         padding: 20
       },
-      card: {
-        width: 300,
-        margin: 10
-      },
+
       pgLogo: {
         width: 200,
         float: 'right',
@@ -120,44 +93,37 @@ class Home extends Component {
         display: 'flex',
         flexFlow: 'row wrap',
         justifyContent: 'space-around',
-        alignItems: 'center'
+        alignItems: 'space-around'
       },
       gridList: {
-        width: 50,
-        height: 50,
+        width: '100%',
+        paddingBottom: 10,
         overflowY: 'auto',
         margin: 5,
       },
-      nurseryDiv: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
+      gridItem: {
+
       }
     };
     return (
-      <div style={styles.div}>
-        <Card style={styles.topCard}>
-          <CardText style={styles.headline}> Peoria Gardens is a wholesale nursery located in the fertile Willamette Valley.
+      <div className='home-container'>
+        <Card className='home-card'>
+          <CardText><span className='headline'>Peoria Gardens Inc.</span>is a wholesale nursery located in the fertile Willamette Valley.
           </CardText>
           <CardMedia style={styles.flowerImg}>
             <img src={BrachyMauve} alt='Bracteantha Mohave Dark Red' />
           </CardMedia>
-          <CardText>From humble beginnings as a backyard hobby, Peoria Gardens now supplies high quality bedding plants to nurseries throughout Western Oregon and Southwest Washington.
+          <CardText>From humble beginnings as a backyard hobby, <span className='heavier'>Peoria Gardens</span> is the primary supplier of high quality bedding plants for nurseries throughout Western Oregon and Southwest Washington.
           </CardText>
           <CardText>
-            Our constantly-evolving stock offers annuals, perennials, vegetable starts, herbs and hanging baskets and more.
+            <span className='heavier'>Our customers,</span> including the finest retail nurseries in the region, receive the highest quality plant materials along with excellent service.
           </CardText>
-          <CardActions style={styles.cardAction}>
-            <RaisedButton label='Go to plants' primary={true} icon={<FaPagelines />}/>
-            <RaisedButton label='Currently Available' />
-          </CardActions>
           <CardMedia style={styles.noGmo}>
             <img src={NoGmo} alt="No GMO & Neonic Free" />
           </CardMedia>
           <CardText>
-            Our customers, including the finest retail nurseries in the region, receive the highest quality plant materials along with excellent service.
+            We offer a diverse stock of annuals, perennials, vegetable starts, herbs and hanging baskets and more.
           </CardText>
-
           <CardText>
             <ul style={{listStyle: 'none', paddingTop: 10}}>
               <li>
@@ -170,28 +136,29 @@ class Home extends Component {
             </ul>
           </CardText>
         </Card>
-        <div style={styles.nurseryDiv}>
-        <Card style={styles.card}>
-          <CardText style={{fontWeight:200, fontSize:16, fontStyle:'italic'}}>We grow high quality young plants for today's sophisticated gardens.</CardText>
-          <CardMedia>
+        <Card className='home-card'>
+          <CardMedia className='card-photo'>
             <img src={AirPhoto} alt='Peoria Gardens from the air' />
           </CardMedia>
+          <CardText className='heavier' style={{fontSize:18, fontStyle:'italic'}}>We grow high quality young plants for today's sophisticated gardens.</CardText>
           <CardText>Our lists also include grasses, ground covers, fall chrysanthemums, ornamental kale and poinsettias.
           </CardText>
-
-
+          <CardActions style={styles.cardAction}>
+            <RaisedButton className='primary-button' label='plants' primary={true} icon={<FaPagelines />}/>
+            <RaisedButton label='Now Available' primary={true} className='primary-button'/>
+          </CardActions>
         </Card>
-        <GridList cellHeight={200} style={styles.gridList}>
-          {sampleImages.forEach((tile) => {
+        <GridList cellHeight={75} style={styles.gridList}
+          cols={5}
+          padding={5}
+          children={sampleImages.forEach((tile) => {
             <GridTile key={tile.altText}>
-              <img src={tile.url} alt={tile.altText} />
-            </GridTile>})}
+              <img src={tile.url} alt={tile.altText} style={styles.gridItem} />
+            </GridTile>})}>
           </GridList>
-      </div>
         </div>
       );
     }
   }
 
-
-export default Home;
+export default Radium(Home);

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import FontIcon from 'material-ui/FontIcon';
-import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
+import {BottomNavigation } from 'material-ui/BottomNavigation';
+import BottomNavigationItem from '../custom-modules/BottomNavigationItem';
 import Paper from 'material-ui/Paper';
 
 import IconLocationOn from 'material-ui/svg-icons/communication/location-on';
@@ -9,11 +10,6 @@ import HomeIcon from 'material-ui/svg-icons/action/home';
 import AboutIcon from 'material-ui/svg-icons/action/face';
 import ContactIcon from 'material-ui/svg-icons/action/question-answer';
 import VerifiedUserIcon from 'material-ui/svg-icons/action/verified-user';
-const recentsIcon = <FontIcon className="material-icons">restore</FontIcon>;
-const favoritesIcon = <FontIcon className="material-icons">favorite</FontIcon>;
-const nearbyIcon = <IconLocationOn />;
-const plantIcon = <FaPagelines />
-
 
 class PeoriaFooter extends Component {
   constructor(props) {
@@ -45,7 +41,7 @@ class PeoriaFooter extends Component {
             />
           <BottomNavigationItem
             label='Plants'
-            icon={plantIcon}
+            icon={<FaPagelines />}
             onTouchTap={() => this.select(2)}
             />
           <BottomNavigationItem

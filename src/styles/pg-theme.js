@@ -16,7 +16,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const pgTheme = {
   spacing: spacing2.default,
-  fontFamily: 'Roboto, sans-serif',
+  fontFamily: 'OpenSans, sans-serif, Vollkorn, serif',
   palette: {
     primary1Color: colors.green500,
     primary2Color: colors.lightGreen500,

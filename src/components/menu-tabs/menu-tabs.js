@@ -1,15 +1,19 @@
 import React from 'react';
 import Radium from 'radium';
-import {Tabs, Tab} from 'material-ui/Tabs';
-// From https://github.com/oliviertassinari/react-swipeable-views
 import SwipeableViews from 'react-swipeable-views';
+import Link from 'react-router';
+import {Tabs, Tab} from 'material-ui/Tabs';
+import IconButton from 'material-ui/IconButton';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+
 import Home from './home';
 import Personnel from './personnel';
 import CatalogIndex from '../catalog/catalog-index';
 import WholesaleCustomers from './wholesale-customers';
 
 import { colors } from 'material-ui/styles';
-
 
 const styles = {
   contactSlide: {
@@ -20,10 +24,18 @@ const styles = {
     padding: 'auto',
     textAlign: 'left'
   },
+  tabs: {
+    maxHeight: 700
+  },
   default_tab:{
     color: colors.white,
-    backgroundColor: colors.green500,
-    fontWeight: 400,
+    background: [
+    `linear-gradient(${colors.lightGreen500}, ${colors.green500})`,
+
+    // fallback
+    colors.lightGreen500,
+    ],
+    fontWeight: 700,
   },
   active_tab:{
     color: colors.yellowA200,
@@ -31,16 +43,15 @@ const styles = {
   },
   inkBarStyle: {
     background: colors.amber500
-  }
+  },
 };
 
-class MenuTabsSwipeable extends React.Component {
+const tabNames = ['Home', 'About', 'Plants', 'Wholesale', 'Contact']
 
+class MenuTabsSwipeable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      slideIndex: this.props.slideIndex,
-    };
+
   }
 
   componentWillMount() {
@@ -48,9 +59,6 @@ class MenuTabsSwipeable extends React.Component {
   }
 
   handleChange = (value) => {
-    this.setState({
-      slideIndex: value,
-    });
     this.props.handleMenuChange(value);
   };
 
@@ -58,33 +66,43 @@ class MenuTabsSwipeable extends React.Component {
     console.log(e.target);
   }
 
-  render() {
-    let styles= {
-      tab: {
-        background: [
-        `linear-gradient(${colors.lightGreen500}, ${colors.green500})`
-        ,
-        colors.lightGreen500
-        ],
-        fontWeight: 400
-      },
+  renderUserMenu(currentUser){
+    // if current user exists and user id exists than make user navigation
+    if (currentUser && currentUser.uid) {
+      return [
+        <MenuItem key={3}>
+          <Link to='/profile'>Profile</Link>
+        </MenuItem>,
+        <Divider />,
+        <MenuItem key={4}> <Link to='/logout' onClick={this.logOut}>Logout</Link></MenuItem>
+        ];
+      } else
+      return [
+         <MenuItem key={1}><Link to='/login'>Login</Link></MenuItem>,
+         <MenuItem key={2}><Link to='/register'>Register</Link></MenuItem>
+      ]
 
-    }
+  }
+
+
+  render() {
     return (
       <div>
         <Tabs
           onChange={this.handleChange}
-          value={this.state.slideIndex}
-          tabItemContainerStyle={styles.tab}
-        >
-          <Tab label='Home' value={0} />
-          <Tab label='About' value={1} />
-          <Tab label='Plants' value={2} />
-          <Tab label='Wholesale' value={3} onClick={this.handleWholesale} />
-          <Tab label='Contact' value={4} />
+          value={this.props.slideIndex}
+          style={styles.tabs}
+          className='menu-tabs'
+          children={[
+            <Tab label='Home' value={0} style={styles.default_tab}/>,
+            <Tab label='About' value={1} style={styles.default_tab}/>,
+            <Tab label='Plants' value={2} style={styles.default_tab}/>,
+            <Tab label='Wholesale' value={3} onClick={this.handleWholesale} style={styles.default_tab}/>,
+            <Tab label='Contact' value={4} style={styles.default_tab}/>
+          ]}>
         </Tabs>
         <SwipeableViews
-          index={this.state.slideIndex}
+          index={this.props.slideIndex}
           onChangeIndex={this.handleChange}
         >
           <div className='home' >

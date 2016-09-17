@@ -6,6 +6,8 @@ import { Link } from 'react-router';
 import { fetchUser, logoutUser } from './actions/firebase_actions';
 import firebase from 'firebase';
 
+import Navigation from './navigation';
+
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
@@ -20,7 +22,7 @@ import Footer from './footer';
 
 import MenuTabsSwipeable from './menu-tabs/menu-tabs';
 
-import BannerWide from '../imgs/bannerPG.gif';
+import BannerWide from '../imgs/peoria-wide-banner.jpg';
 
 class App extends Component {
   constructor(props) {
@@ -78,7 +80,8 @@ class App extends Component {
   }
 
   handleMenuChange(slideIndex) {
-    this.setState({ slideIndex });
+    console.log('newProps', slideIndex)
+    this.setState({ slideIndex: slideIndex });
   }
 
   renderLoginOrLogout() {
@@ -140,7 +143,9 @@ class App extends Component {
     return (
       <MuiThemeProvider muiTheme={getMuiTheme(pgTheme)}>
       <div className='App'>
-        <img src={BannerWide} alt='Peoria Gardens Inc.' style={{width: '100%'}}/>
+        <div style={{display:'flex',justifyContent:'center'}}>
+        <img src={BannerWide} alt='Peoria Gardens Inc.' style={{margin: 10}}/>
+        </div>
         <MenuTabsSwipeable user={this.state.currentUser} slideIndex={this.state.slideIndex} handleMenuChange={this.handleMenuChange} />
         {this.props.children}
         <Footer slideIndex={this.state.slideIndex} handleMenuChange={this.handleMenuChange} />

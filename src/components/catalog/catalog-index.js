@@ -1,10 +1,11 @@
 import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
+import SwipeableViews from 'react-swipeable-views';
+
 import { Card, CardHeader, CardText, CardTitle } from 'material-ui/Card';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import { List, ListItem } from 'material-ui/List';
-import CircularProgress from 'material-ui/CircularProgress';
-import Radium from 'radium';
-
+import LinearProgress from 'material-ui/LinearProgress';
 import Star from 'material-ui/svg-icons/action/stars'
 
 import CatalogSection from './catalog-section';
@@ -15,7 +16,7 @@ import {colors} from 'material-ui/styles';
 
 import '../../styles/catalog-index.css';
 
-const ref = firebase.database().ref('catalog');
+const ref = firebase.database().ref('catalogKeys');
 
 const listStyles = {
   fontSize: '1.5em',
@@ -27,70 +28,56 @@ class CatalogIndex extends Component {
     super(props);
 
     this.state = {
+      plantsSlideIndex: 0,
       renderArray: [],
       menuRender: null,
       sectionNames: null,
       searchRequest: 'PREMIUMS',
       searchRequests: [],
       plants: {},
-      catalogKeys: {
-        sectionNames: [],
-        genusNames: [],
-        scientificNames: []
-      }
+      catalogKeys: null
     }
   }
 
   componentWillMount() {
     //See if there is a search request
-    let {searchRequest} = this.state;
-    firebase.database().ref().child('catalogKeys').on('value', (snapshot) => {
-      if (snapshot === null) {
+    let {catalogKeys} = this.state;
+    if (!catalogKeys) {
+      console.log('catalogKeys.sectionNames is empty');
+      ref.on('value', (snapshot) => {
+        if (snapshot === null) {
 
-        // Get all the plants and create a list of sectionNames and scientificNames
-        ref.orderByChild('PRODUCT GROUP')
-        .on('value', (snapshot) => {
-          let plants = snapshot.val();
-          console.log('init snap', plants);
-          //firebase snapshot callback
-          let sectionNames = [];
-          let scientificNames = [];
-          let genusNames = [];
-          plants.forEach((plant) => {
-            if (!sectionNames.includes(plant['PRODUCT GROUP'])) {
-              sectionNames.push(plant['PRODUCT GROUP']);
-            };
-            if (!genusNames.includes(plant['Genus'].trim())) {
-              genusNames.push(plant['Genus'].trim());
-              if (!scientificNames.includes(plant['Variety'])) {
-                scientificNames.push(`${plant['Genus 2'].trim()} ${plant['Variety']}`);
+          // Get all the plants and create a list of sectionNames
+          ref.orderByChild('PRODUCT GROUP').once('value').then((snapshot) => {
+            let sectionNames = [];
+            let allPlants = snapshot.val();
+            console.log('init snap', plantsSection);
+            allPlants.forEach((plant) => {
+              let plantSectionName = plant['PRODUCT GROUP'];
+              let isInSection = sectionNames.includes(plantSectionName);
+              if (!isInSection) {
+                sectionNames.push(plantSectionName);
               }
-            }
+            });
+            //initial plants loop ends
+            // get tab menu
+            this.setState({ catalogKeys: {sectionNames} });
           });
-          // looping through plants ends
+        } else {
+          //snapshot not null
+          let catalogKeys = snapshot.val();
+          console.log('ths snap', snapshot.val());
 
-          // create menu-tabs
-          let menuRender = this.renderListItems(sectionNames);
-
-          // snapshot callback ending, set the states
-          let catalogKeys = {
-            sectionNames: sectionNames,
-            genusNames: genusNames,
-            scientificNames: scientificNames
-          }
-          this.setState({catalogKeys, menuRender});
-
-          //save the lists to database
-          firebase.database().ref().child('catalogKeys').set(catalogKeys);
-        });
-      //snapshot not null?
+          let menuRender = this.renderSectionTabs(catalogKeys.sectionNames);
+          this.setState({catalogKeys: catalogKeys, menuRender: menuRender});
+        }
+      });
     } else {
-      let catalogKeys = snapshot.val();
-      console.log('ths snap', snapshot.val())
-      let menuRender = this.renderListItems(catalogKeys.sectionNames);
-      this.setState({catalogKeys: catalogKeys, menuRender: menuRender});
+      // we already have keys
+      console.log('we already have keys', catalogKeys);
+      let menuRender = this.renderSectionTabs(catalogKeys.sectionNames);
+      this.setState({menuRender: menuRender});
     }
-    });
   }
 
   componentWillUnmount() {
@@ -109,28 +96,132 @@ class CatalogIndex extends Component {
     }
   }
 
-  getPlantsBySection(searchRequest) {
-    let {plants, searchRequests} = this.state;
-    if (!searchRequests.includes(searchRequest)) {
-      plants[searchRequest] = {};
-      searchRequests.push(searchRequest)
-    } else {
+  getPlantsBySection(sectionName, searchRequest = '') {
+    let {plants, searchRequests, catalogKeys} = this.state;
+    if (searchRequests.includes(searchRequest) && (searchRequest)) {
       console.log('u already searched for that');
       return
-    }
-    ref.orderByChild('PRODUCT GROUP')
-      .equalTo(searchRequest)
-      .on('value', (snapshot) => {
-        let newPlants = snapshot.val();
-        if (!newPlants) {
+    } else {
+      //new search!
+      searchRequests.push(searchRequest);
+      this.setState({ searchRequests: searchRequests });
+
+      //set a listener for that product group
+      ref.orderByChild('PRODUCT GROUP').equalTo(searchRequest).on('value', (snapshot) => {
+        let { plants } = this.state;
+        let plantsBySection = snapshot.val();
+        if (!plantsBySection) {
           console.log('database doesnt have that product group');
-          return
+        } else {
+          let sectionName = searchRequest;
+          let varietyNames = [];
+          let genusNames = [];
+          plantsBySection.forEach((plant) => {
+            let plantGenusName = plant['Genus'].trim();
+            let plantVarietyName = plant['Variety'].trim();
+            let hasSection = Object.keys(plants).includes(sectionName);
+
+            if (hasSection) {
+              //plants has the section, see if it has the genus
+              let hasGenus = Object.keys(plants[sectionName]).includes(plantGenusName);
+
+              if (!hasGenus) {
+                //plants doesn't have the genus
+                plants[sectionName][plantGenusName] = {};
+                genusNames.push(plantGenusName);
+
+                // if the plant is a base genus, it doesn't seem to have a variety but it has a variety 2
+                let wasBaseGenus = false;
+                if (plantVarietyName === null) {
+                  plantVarietyName = plant['Variety 2'].trim();
+                  wasBaseGenus = true;
+                }
+                if (wasBaseGenus) {
+                  //make the base genus a variety and set the genus description
+                  plants[sectionName][plantGenusName][plantVarietyName] = [plant];
+                  plants[sectionName][plantGenusName]['Description'] = plant['Description'];
+
+                  //add the scientific name to varietyNames with the nice Genus 2 name
+                  varietyNames.push(`${plant['Genus 2'].trim()} ${plantVarietyName}`);
+                } else {
+                  //it's not a base genus so we'll do the same for variety but don't alter genus description
+                  plants[sectionName][plantGenusName][plantVarietyName] = [plant];
+                  varietyNames.push(`${plant['Genus 2'].trim()} ${plantVarietyName}`);
+                }
+              } else {
+                //plants has genus
+                // if the plant is a base genus, it doesn't seem to have a variety but it has a variety 2
+                let wasBaseGenus = false;
+                if (plantVarietyName === null) {
+                  plantVarietyName = plant['Variety 2'].trim();
+                  wasBaseGenus = true;
+                }
+
+                //see if it plants has the variety
+                let hasVariety = Object.keys(plants[sectionName][plantGenusName]).includes(plantVarietyName);
+                if (!hasVariety) {
+                  if (wasBaseGenus) {
+                    //make the base genus a variety and set the genus description
+                    plants[sectionName][plantGenusName][plantVarietyName] = [plant];
+
+                    //write the genus description
+                    plants[sectionName][plantGenusName]['Description'] = plant['Description'];
+
+                    //add the scientific name to varietyNames with the nice Genus 2 name
+                    varietyNames.push(`${plant['Genus 2'].trim()} ${plantVarietyName}`);
+                  } else {
+                    //it's not a base genus so we'll do the same for variety but don't alter genus description
+                    plants[sectionName][plantGenusName][plantVarietyName] = [plant];
+                    varietyNames.push(`${plant['Genus 2'].trim()} ${plantVarietyName}`);
+                  }
+                } else {
+                  //plants has the variety
+                  // it's a genus, push it to the array on the variety name
+                  plants[sectionName][plantGenusName][plantVarietyName].push(plant);
+                }
+              }
+            } else {
+              //plants doesn't have that section ...yet
+              genusNames.push(genusName);
+              plants[sectionName] = {
+                [plantGenusName]: {}
+              };
+              let wasBaseGenus = false;
+              if (plantVarietyName === null) {
+                //it's a base genus
+                plantVarietyName = plant['Variety 2'];
+                wasBaseGenus = true;
+              }
+              if (wasBaseGenus) {
+                plants[plantSectionName][plantGenusName] = {
+                  Description: plant['Description'],
+                  [plantVarietyName]: [plant]
+                };
+              } else {
+                //was regular variety
+                plants[plantSectionName][plantGenusName][plantVarietyName] = [plant];
+              }
+              //add nice names to variety names
+              varietyNames.push(`${plant['Genus 2'].trim()} ${plantVarietyName}`);
+            }
+          });
+          // looping through plantsSection ends and all values should be filled in plants from this section, let's save the new plants
+          this.setState({ plants: plants });
+          console.log('plants', plants);
+
+          // snapshot callback ending, set the states
+          catalogKeys['genusNames'] = genusNames
+          catalogKeys['varietyNames'] = varietyNames;
+
+          this.setState({catalogKeys: catalogKeys });
+
+          //save the lists to database
+          firebase.database().ref('catalogKeys').set(catalogKeys);
         }
-        plants[searchRequest] = newPlants;
-        this.setState({ plants: plants });
-        console.log('plants', plants);
-    });
-    this.setState({ searchRequests: searchRequests });
+      });
+      // create menu-tabs
+      let menuRender = this.renderTabDivs(sectionNames, plants);
+    }
   }
 
   componentWillReceiveProps() {
@@ -138,7 +229,7 @@ class CatalogIndex extends Component {
   }
 
   componentWillUnmount() {
-    ref.off();
+    ref().off();
   }
 
   handleSearchRequest(searchRequest) {
@@ -149,71 +240,76 @@ class CatalogIndex extends Component {
     }
   }
 
-  handleSectionSelect(sectionName) {
-    this.getPlantsBySection(sectionName);
-    this.setState({ searchRequest: sectionName });
+  handleSectionTabChange = (value) => {
+    this.setState({ plantsSlideIndex: value })
   }
 
-  renderListItems(sectionNames) {
+  renderSectionTabs(sectionNames) {
     let styles = {
-      listItem: {
-      background: [
-      `linear-gradient(${colors.lightGreen500}, ${colors.green500})`,
-
-      // fallback
-      colors.lightGreen500,
-    ],
-      color: 'white',
-      marginLeft: 20
+      tab: {
+        background: [
+          `linear-gradient(${colors.green500}, ${colors.amber500})`,
+          // fallback
+          colors.lightGreen500,
+        ],
+        color: 'white',
+        fontWeight: 'bold'
       }
-    };
+    }
     let renderArray = [];
     sectionNames.forEach((sectionName, i) => {
       renderArray.push(
-        <ListItem primaryText={sectionName} key={sectionName} style={styles.listItem} onTouchTap={this.handleSectionSelect.bind(this, sectionName)} />
+        <Tab label={sectionName} key={i} value={i} style={styles.tab} onTouchTap={this.handleSectionTabChange.bind(this)} />
       );
     });
     return renderArray
   }
 
+  renderTabDivs(sectionNames, plants) {
+    let { catalogKeys } = this.state;
+    let tabArray = [];
+    catalogKeys.sectionNames.forEach((sectionName, i) => {
+      tabArray.push(<CatalogSection title={sectionName} key={i} />);
+    });
+    tabArray.push(<div className='search'>
+      <CatalogSearch {...this.props} key='search' catalogKeys={catalogKeys}
+      handleSearchRequest={this.handleSearchRequest.bind(this)} /> </div>);
+    return tabArray;
+  }
+
   render() {
     // const { dispatch, selectedSection, plants, isFetching } = this.props;
-    let { plants, catalogKeys } = this.state;
-    let { sectionNames, genusNames, scientificNames } = catalogKeys;
-    let styles = {
-      menuCard: {
-        width: 300,
+    let { catalogKeys, plants } = this.state;
 
-      },
+    console.log('render index', catalogKeys, plants)
+    let styles = {
       tabs: {
-        inkBarStyle: {
-          backgroundColor: colors.yellow500
-        }
+        color: 'black',
+        fontWeight: 'bold',
+        width: '100%',
       },
-      listItem: {
-      backgroundColor: colors.green500,
-      width: 280,
-      textAlign: 'left',
-      fontWeight: 'bold'
-      }
     };
     return (
       <div className='catalog-index'>
-        <div className='sidebar'>
-          {(sectionNames) ?
-            <List>{this.renderListItems(sectionNames)}
-            </List> : <div><List><ListItem primaryText='LOADING SECTIONS'  /></List><CircularProgress size={2} color={colors.red900} /></div>}
+        <div className='section-tabs-container'>
+        {(catalogKeys) ?
+          <Tabs
+            onChange={this.handleSectionTabChange}
+            value={this.state.plantsSlideIndex}
+            style={styles.tabs}
+            className='section-tabs'
+            inkBarStyle={{backgroundColor: colors.red900}}
+            children={this.renderSectionTabs(catalogKeys.sectionNames)} />
+          : <div><LinearProgress size={2} color={colors.red900} /></div>}
         </div>
         <Card className='index-card'>
-          {(plants) ? Object.keys(plants).map((key, i) => {
-            return <CatalogSection plant={plants[key]} title={key} key={i} />
-          }) : null}
-          <div className='search'>
-            {(scientificNames) ? <CatalogSearch {...this.props} scientificNames={scientificNames}
-            genusNames={genusNames}
-            sectionNames={sectionNames}
-            catalogKeys={catalogKeys} handleSearchRequest={this.handleSearchRequest.bind(this)} /> : null}
-          </div>
+          {(catalogKeys && plants) ?
+          <SwipeableViews
+            index={this.state.plantsSlideIndex}
+            onChangeIndex={this.handleSectionChange}
+            children={this.renderTabDivs(catalogKeys.sectionNames, plants)} >
+          </SwipeableViews>
+          : <div>loading</div>}
       </Card>
       </div>
     );
@@ -222,6 +318,68 @@ class CatalogIndex extends Component {
 
 export default Radium(CatalogIndex);
 
+
+// set plant listener for each section
+// ** but do we need to ?? let's try it without
+// catalogKeys.sectionNames.forEach((sectionName) => {
+//   this.getPlantsBySection(sectionName);
+// });
+//render tabs
+
+    // set listeners for plants by section..no wait, don't
+    // sectionNames.forEach((sectionName) => {
+    //   this.getPlantsBySection(sectionName);
+    // });
+
+
+  // ref.orderByChild('PRODUCT GROUP')
+  // .on('value', (snapshot) => {
+  //   //firebase snapshot callback
+  //   let sectionNames = [];
+  //
+  //
+  //     let plantGenusName = plant['Genus'].trim();
+  //     let isInGenus = genusNames.indexOf(plantGenusName);
+  //     let plantVarietyName = plant['Variety'].trim();
+  //     let isInVariety = varietyNames.indexOf(plantVarietyName);
+  //
+  //
+  //       if (isInGenus < 0) {
+  //         genusNames.push(plantGenusName);
+  //         plants[plantSectionName][plantGenusName] = {};
+  //         if (plantVarietyName === null) {
+  //           plants[plantSectionName][plantGenusName]['Description'] = plant['Description'];
+  //           plants[plantSectionName][plantGenusName][plant['Variety 2']] = [plant];
+  //           }
+  //
+  //         if (plantVarietyName !== null) {
+  //           plants[plantSectionName][plantGenusName] = {
+  //             [plantVarietyName]: [plant]
+  //           };
+  //         }
+  //       } else {
+  //         // plants has that genus
+  //         if (isInVariety < 0) {
+  //           if (plantVarietyName === null) {
+  //             varietyNames.push(plant['Variety 2']);
+  //             plants[plantSectionName][plantGenusName]['Description'] = plant['Description'];
+  //             plants[plantSectionName][plantGenusName][plant['Variety 2']].push(plant);
+  //           }
+  //           if (plantVarietyName !== null) {
+  //             varietyNames.push(plantVarietyName);
+  //             plants[plantSectionName][plantGenusName][plant['Variety 2']].push(plant);
+  //           }
+  //         } else {
+  //           // plants has that variety
+  //           plants[plantSectionName][plantGenusName][plantVarietyName].push(plant);
+  //         }
+  //       }
+  //     }
+  //
+  //   });
+
+  // });
+// snapshot not null?
 
 
   // componentWillReceiveProps(nextProps) {
