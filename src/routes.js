@@ -12,17 +12,18 @@ import ResetPassword from './components/user/reset_password';
 import requireAuth from './components/utils/authenticated';
 import UpdateCatalog from './components/catalog/update-catalog';
 import MenuTabsSwipeable from './components/menu-tabs/menu-tabs';
-import Home from './components/menu-tabs/home';
+import CatalogIndex from './components/catalog/catalog-index';
 
 
 export default (
   <Route path='/' component={App}>
-
+    <IndexRoute component={MenuTabsSwipeable} />
     <Route path='/login' component={UserLogin} />
     <Route path='/logout' component={UserLogout} />
     <Route path='/register' component={UserRegister} />
     <Route path='/reset' component={ResetPassword} />
     <Route path='/profile' component={UserProfile} onEnter={requireAuth} />
     <Route path='/update' component={UpdateCatalog} />
+    <Route path='/catalog' component={CatalogIndex} />
   </Route>
 );

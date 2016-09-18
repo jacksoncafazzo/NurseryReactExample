@@ -18,7 +18,7 @@ export default class CatalogSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: false,
+      sectionExpanded: false,
       genusRenderArray: [],
       genuses: {},
       genusNames: [],
@@ -153,15 +153,16 @@ export default class CatalogSection extends Component {
   // all queries finished
 
   componentWillUnmount() {
+    this.setState({ sectionExpanded: false });
     ref.off();
   }
 
   handleExpandChange(expanded) {
-    this.setState({ expanded: expanded});
+    this.setState({ sectionExpanded: expanded});
   }
 
   handleToggle(event, toggle) {
-    this.setState({ expanded: toggle });
+    this.setState({ sectionExpanded: toggle });
   }
 
 
@@ -173,12 +174,19 @@ export default class CatalogSection extends Component {
       return (<div>loading</div>)
     } else {
       return (
-        <Card key={title} className='section-card'>
+        <Card key={title} className='section-card' expanded={this.state.sectionExpanded} onExpandChange={this.handleExpandChange.bind(this)}>
           <CardHeader title={<CardTitle title={title}
-            />}
+            children={
+              <Toggle
+                toggled={this.state.sectionExpanded}
+                onToggle={this.handleToggle.bind(this)}
+                labelPosition='right'
+                label='Click here to load section'
+                />
+            } />}
             avatar={Brachy} />
           {Object.keys(genuses).map((key, i) => {
-            return <CatalogGenus genus={genuses[key]} key={genuses[key].key} title={key}
+            return <CatalogGenus expandable={true} genus={genuses[key]} key={genuses[key].key} title={key}
             subtitle={genuses[key].subtitle} description={genuses[key]['Description']} />
           })}
         </Card>

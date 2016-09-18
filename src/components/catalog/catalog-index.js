@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import SwipeableViews from 'react-swipeable-views';
+import { browserHistory } from 'react-router';
 
 import { Card, CardHeader, CardText, CardTitle } from 'material-ui/Card';
 import { Tabs, Tab } from 'material-ui/Tabs';
@@ -17,6 +18,28 @@ import {colors} from 'material-ui/styles';
 import '../../styles/catalog-index.css';
 
 const ref = firebase.database().ref('catalogKeys');
+const styles = {
+  tabs: {
+    width: '100%'
+  },
+  default_tab:{
+    color: colors.white,
+    background: [
+    `linear-gradient(${colors.lightGreen500}, ${colors.green500})`,
+
+    // fallback
+    colors.lightGreen500,
+    ],
+    fontWeight: 700,
+  },
+  active_tab:{
+    color: colors.yellowA200,
+    borderColor: colors.yellowA200
+  },
+  inkBarStyle: {
+    background: colors.amber500
+  },
+};
 
 const listStyles = {
   fontSize: '1.5em',
@@ -29,6 +52,7 @@ class CatalogIndex extends Component {
 
     this.state = {
       plantsSlideIndex: 0,
+      fakeSlideIndex: 2,
       renderArray: [],
       menuRender: null,
       sectionNames: null,
@@ -229,7 +253,7 @@ class CatalogIndex extends Component {
   }
 
   componentWillUnmount() {
-    ref().off();
+    ref.off();
   }
 
   handleSearchRequest(searchRequest) {
@@ -241,11 +265,15 @@ class CatalogIndex extends Component {
   }
 
   handleSectionTabChange = (value) => {
-    this.setState({ plantsSlideIndex: value })
+    this.setState({ plantsSlideIndex: value });
   }
+
 
   renderSectionTabs(sectionNames) {
     let styles = {
+      tabs: {
+        width: '100%'
+      },
       tab: {
         background: [
           `linear-gradient(${colors.green500}, ${colors.amber500})`,
@@ -259,7 +287,8 @@ class CatalogIndex extends Component {
     let renderArray = [];
     sectionNames.forEach((sectionName, i) => {
       renderArray.push(
-        <Tab label={sectionName} key={i} value={i} style={styles.tab} onTouchTap={this.handleSectionTabChange.bind(this)} />
+        <Tab label={sectionName} key={i} value={i} style={styles.tab} onTouchTap={this.handleSectionTabChange.bind(this)}
+           />
       );
     });
     return renderArray
@@ -277,6 +306,37 @@ class CatalogIndex extends Component {
     return tabArray;
   }
 
+  handleActive(tab) {
+    browserHistory.push(tab.props['data-route']);
+  }
+
+  renderTabs() {
+    const tabNames = ['Home', 'About', 'Plants', 'Wholesale', 'Contact'];
+    let tabArray = [];
+    tabNames.forEach((tabName, i) => {
+      if (i === 2) {
+        tabArray.push(<Tab label={tabName} value={i}
+          data-route='/catalog'
+          onActive={this.handleActive.bind(this)}
+          style={styles.default_tab}/>);
+      } else {
+        tabArray.push(<Tab label={tabName} onActive={this.handleActive.bind(this)} data-route='/' value={i} style={styles.default_tab}/>);
+      }
+    });
+    return tabArray;
+  }
+
+  renderFakeTopTabs() {
+    let tabArray = [];
+    return (<Tabs
+      onChange={this.handleChange}
+      value={this.state.fakeSlideIndex}
+      style={styles.tabs}
+      className='menu-tabs'
+      children={this.renderTabs()}>
+    </Tabs>)
+  }
+
   render() {
     // const { dispatch, selectedSection, plants, isFetching } = this.props;
     let { catalogKeys, plants } = this.state;
@@ -291,6 +351,7 @@ class CatalogIndex extends Component {
     };
     return (
       <div className='catalog-index'>
+        {this.renderFakeTopTabs()}
         <div className='section-tabs-container'>
         {(catalogKeys) ?
           <Tabs

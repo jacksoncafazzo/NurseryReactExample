@@ -1,4 +1,10 @@
 import React, {Component} from 'react';
+import { browserHistory } from 'react-router';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { selectTab } from './actions/index';
+
 import FontIcon from 'material-ui/FontIcon';
 import {BottomNavigation } from 'material-ui/BottomNavigation';
 import BottomNavigationItem from '../custom-modules/BottomNavigationItem';
@@ -15,20 +21,26 @@ class PeoriaFooter extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedIndex: this.props.slideIndex,
-    };
+      slideIndex: 0
+    }
+
     this.select = this.select.bind(this);
   }
 
   select(index) {
-    this.setState({selectedIndex: index});
-    this.props.handleMenuChange(index);
+    if (index === 2) {
+      this.props.selectTab(index);
+      browserHistory.push('/catalog');
+    } else {
+      this.props.selectTab(index);
+      this.setState({slideIndex: index});
+    }
   }
 
   render() {
     return (
       <Paper zDepth={1}>
-        <BottomNavigation selectedIndex={this.state.slideIndex}>
+        <BottomNavigation selectedIndex={this.props.slideIndex}>
           <BottomNavigationItem
             label='Home'
             icon={<HomeIcon />}
@@ -61,4 +73,13 @@ class PeoriaFooter extends Component {
     }
   }
 
-  export default PeoriaFooter;
+  function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ selectTab }, dispatch);
+  }
+
+  function mapStateToProps({slideIndex}) {
+    return { slideIndex: slideIndex };
+  }
+
+
+  export default connect(mapStateToProps, mapDispatchToProps)(PeoriaFooter);

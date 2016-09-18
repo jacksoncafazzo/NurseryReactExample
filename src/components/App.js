@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Link } from 'react-router';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { selectTab } from './actions/index';
 import { fetchUser, logoutUser } from './actions/firebase_actions';
-import firebase from 'firebase';
 
-import Navigation from './navigation';
+import firebase from 'firebase';
 
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
@@ -19,8 +19,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import pgTheme from '../styles/pg-theme.js';
 import Footer from './footer';
-
-import MenuTabsSwipeable from './menu-tabs/menu-tabs';
 
 import BannerWide from '../imgs/peoria-wide-banner.jpg';
 
@@ -80,8 +78,9 @@ class App extends Component {
   }
 
   handleMenuChange(slideIndex) {
-    console.log('newProps', slideIndex)
-    this.setState({ slideIndex: slideIndex });
+    console.log('newProps', slideIndex);
+    this.setState({slideIndex});
+    // this.setState({ slideIndex: slideIndex });
   }
 
   renderLoginOrLogout() {
@@ -146,9 +145,8 @@ class App extends Component {
         <div style={{display:'flex',justifyContent:'center'}}>
         <img src={BannerWide} alt='Peoria Gardens Inc.' style={{margin: 10}}/>
         </div>
-        <MenuTabsSwipeable user={this.state.currentUser} slideIndex={this.state.slideIndex} handleMenuChange={this.handleMenuChange} />
         {this.props.children}
-        <Footer slideIndex={this.state.slideIndex} handleMenuChange={this.handleMenuChange} />
+        <Footer />
       </div>
     </MuiThemeProvider>
     );
@@ -160,11 +158,12 @@ App.childContextTypes = {
 }
 
 function mapDispatchToProps(dispatch){
-  return  bindActionCreators({ fetchUser, logoutUser }, dispatch);
+  return bindActionCreators({ fetchUser }, dispatch);
 }
 
-function mapStateToProps({currentUser}){
+function mapStateToProps({currentUser, slideIndex}){
   return {currentUser};
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

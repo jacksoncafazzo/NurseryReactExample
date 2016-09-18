@@ -1,7 +1,12 @@
 import React from 'react';
 import Radium from 'radium';
 import SwipeableViews from 'react-swipeable-views';
-import Link from 'react-router';
+import { browserHistory, Link } from 'react-router';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { selectTab } from '../actions/index';
+
 import {Tabs, Tab} from 'material-ui/Tabs';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
@@ -12,6 +17,7 @@ import Home from './home';
 import Personnel from './personnel';
 import CatalogIndex from '../catalog/catalog-index';
 import WholesaleCustomers from './wholesale-customers';
+import Footer from '../footer';
 
 import { colors } from 'material-ui/styles';
 
@@ -51,7 +57,9 @@ const tabNames = ['Home', 'About', 'Plants', 'Wholesale', 'Contact']
 class MenuTabsSwipeable extends React.Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      slideIndex: 0
+    }
   }
 
   componentWillMount() {
@@ -59,7 +67,8 @@ class MenuTabsSwipeable extends React.Component {
   }
 
   handleChange = (value) => {
-    this.props.handleMenuChange(value);
+    this.props.selectTab(value);
+    // this.setState({ slideIndex: value })
   };
 
   handleWholesale = (e) => {
@@ -81,9 +90,28 @@ class MenuTabsSwipeable extends React.Component {
          <MenuItem key={1}><Link to='/login'>Login</Link></MenuItem>,
          <MenuItem key={2}><Link to='/register'>Register</Link></MenuItem>
       ]
-
   }
 
+  handleActive(tab) {
+    selectTab(tab.value);
+    browserHistory.push(tab.props['data-route']);
+  }
+
+  renderTabs() {
+    const tabNames = ['Home', 'About', 'Plants', 'Wholesale', 'Contact'];
+    let tabArray = [];
+    tabNames.forEach((tabName, i) => {
+      if (i === 2) {
+        tabArray.push(<Tab label={tabName} value={i}
+          data-route='/catalog'
+          onActive={this.handleActive.bind(this)}
+          style={styles.default_tab}/>);
+      } else {
+        tabArray.push(<Tab label={tabName} value={i}  style={styles.default_tab}/>);
+      }
+    });
+    return tabArray;
+  }
 
   render() {
     return (
@@ -93,13 +121,7 @@ class MenuTabsSwipeable extends React.Component {
           value={this.props.slideIndex}
           style={styles.tabs}
           className='menu-tabs'
-          children={[
-            <Tab label='Home' value={0} style={styles.default_tab}/>,
-            <Tab label='About' value={1} style={styles.default_tab}/>,
-            <Tab label='Plants' value={2} style={styles.default_tab}/>,
-            <Tab label='Wholesale' value={3} onClick={this.handleWholesale} style={styles.default_tab}/>,
-            <Tab label='Contact' value={4} style={styles.default_tab}/>
-          ]}>
+          children={this.renderTabs()}>
         </Tabs>
         <SwipeableViews
           index={this.props.slideIndex}
@@ -112,7 +134,7 @@ class MenuTabsSwipeable extends React.Component {
             about
           </div>
           <div>
-            <CatalogIndex />
+
           </div>
           <div className='wholesale-lists' >
             <WholesaleCustomers />
@@ -132,4 +154,12 @@ class MenuTabsSwipeable extends React.Component {
   }
 }
 
-export default Radium(MenuTabsSwipeable);
+function mapStateToProps({slideIndex}) {
+  return { slideIndex };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ selectTab }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Radium(MenuTabsSwipeable));

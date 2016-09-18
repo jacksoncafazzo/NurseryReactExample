@@ -13,7 +13,7 @@ import {
 export default function(state = {}, action) {
     switch (action.type) {
         case FETCH_FIREBASE_USER:
-            return { currentUser: action.payload }
+            return action.payload
         case LOGOUT_FIREBASE_USER:
             return { currentUser: action.payload }
         case REGISTER_FIREBASE_USER:

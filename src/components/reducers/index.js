@@ -1,11 +1,10 @@
 import { combineReducers } from 'redux';
 import FirebaseReducer from './firebase-reducer';
-import { selectedSection, plantsBySection } from './reducer-section';
+import TabReducer from './reducer-tab';
 
 const rootReducer = combineReducers({
   currentUser: FirebaseReducer,
-  plantsBySection,
-  selectedSection,
+  slideIndex: TabReducer,
 });
 
 export default rootReducer;

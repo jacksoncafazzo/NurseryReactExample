@@ -27,7 +27,7 @@ function createStoreWithMiddleware(rootReducer, previousState) {
 
 ReactDOM.render(
   <Provider store={createStoreWithMiddleware(rootReducer)}>
-  <Router history={browserHistory} routes={routes} />
+    <Router history={browserHistory} routes={routes} />
   </Provider>,
 
   document.getElementById('root')
