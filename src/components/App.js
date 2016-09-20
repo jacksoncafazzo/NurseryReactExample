@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { selectTab } from './actions/index';
+import { selectTab, consumePlants } from './actions/index';
 import { fetchUser, logoutUser } from './actions/firebase_actions';
 
 import firebase from 'firebase';
@@ -22,13 +22,16 @@ import Footer from './footer';
 
 import BannerWide from '../imgs/peoria-wide-banner.jpg';
 
+
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       currentUser: {},
-      error: '',
+      plants: {},
       slideIndex: 0,
+      error: '',
+      catalogKeys: {},
     }
     this.props.fetchUser();
     this.logOut = this.logOut.bind(this);
@@ -158,12 +161,11 @@ App.childContextTypes = {
 }
 
 function mapDispatchToProps(dispatch){
-  return bindActionCreators({ fetchUser }, dispatch);
+  return bindActionCreators({ fetchUser, consumePlants, selectTab }, dispatch);
 }
 
-function mapStateToProps({currentUser, slideIndex}){
-  return {currentUser};
+function mapStateToProps({currentUser, plants, slideIndex}){
+  return {currentUser, plants, slideIndex};
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

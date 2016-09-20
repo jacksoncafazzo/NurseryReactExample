@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import Radium from 'radium';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { consumeGenus } from '../actions/index';
 import firebase from 'firebase';
 
 import { Card, CardTitle, CardHeader, CardText } from 'material-ui/Card';
@@ -8,153 +11,180 @@ import {colors} from 'material-ui/styles';
 import CatalogGenus from './catalog-genus';
 import CatalogSearch from './catalog-search';
 
-import Brachy from '../../imgs/BrachycomeRadiantMagenta.jpg';
+import PeoriaIcon from '../../imgs/peoria-icon.png';
 
 import '../../styles/catalog-index.css';
 
-const ref = firebase.database().ref('catalog');
+const plantsRef = firebase.database().ref('plants/sections');
+const catalogRef = firebase.database().ref('catalog');
 
-export default class CatalogSection extends Component {
+const styles = {
+  title: {
+    fontFamily: [
+      'Vollkorn',
+      'serif'
+    ]
+  },
+}
+
+class CatalogSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
       sectionExpanded: false,
+      sectionName: this.props.title,
       genusRenderArray: [],
-      genuses: {},
+      section: this.props.section,
       genusNames: [],
       varietyNames: [],
-      styles: {}
+      loaded: 'Load Section'
     }
   }
 
   componentWillMount() {
-    let {title} = this.props;
-    ref.orderByChild('PRODUCT GROUP').startAt(title).endAt(title).on('value', (snapshot) => {
-      let {genuses, varietyNames} = this.state;
-      let plantsBySection = snapshot.val();
-      if (!plantsBySection) {
-        console.log('database doesnt have that product group');
-      } else {
-        let sectionName = title;
-        let genusNames = Object.keys(genuses);
-        let plant = {};
-        Object.keys(plantsBySection).map((key, i) => {
-          plant = plantsBySection[key];
-          let plantGenusName = plant['Genus'].trim();
-          let plantVarietyName = plant['Variety'].trim();
-
-          //check for baseGenus
-          let wasBaseGenus = false;
-          if (plantVarietyName === null) {
-            plantVarietyName = plant['Variety 2'].trim();
-            wasBaseGenus = true;
-          }
-
-          // see if it is in this component's object
-          let isInGenus = genusNames.includes(plantGenusName);
-          if (!isInGenus) {
-            //let's add it
-            genusNames.push(plantGenusName);
-            genuses[plantGenusName] = {
-              varieties: {},
-              key: key,
-              Description: plant['Description'],
-              subtitle: `${plant['Genus 2'].trim()} ${plantVarietyName}`
-            };
-
-            //add variety name to list
-            varietyNames.push(plantVarietyName);
-
-            if (wasBaseGenus) {
-              //make the base genus a variety and set the genus description
-              genuses[plantGenusName][subtitle] = `${plant['Genus 2'].trim()} ${plantVarietyName}`;
-              genuses[plantGenusName]['Description'] = plant['Description'];
-            }
-
-            // either way, add this plant to it's a variety name on the genus
-            // this genus tested empty, so we will make a new variety for this plant too.
-            genuses[plantGenusName]['varieties'][plantVarietyName] = {
-              //add scientificName
-              scientificName: `${plant['Genus 2'].trim()} ${plantVarietyName}`,
-              Description: plant['Description'],
-              img: plant['img'],
-              height: plant['Height'],
-              volumes: [plant['Volume US (Metric)']],
-              sizes: [plant['Pot Category']],
-              gpDescs: [plant['GROWPOINT ITEMDESC']]
-            };
-          } else {
-            // genuses has genus, let's do the variety
-
-            //check for baseGenus
-            if (wasBaseGenus) {
-              genuses[plantGenusName]['Description'] = plant['Description'];
-              genuses[plantGenusName]['subtitle'] = `${plant['Genus 2'].trim()} ${plantVarietyName}`;
-              genuses[plantGenusName].key = key
-            }
-
-            //see if genuses has variety
-            let isInVariety = varietyNames.includes(plantVarietyName);
-
-            if (!isInVariety) {
-              //push variety name to list
-              varietyNames.push(plantVarietyName);
-
-              //if it was not a base genus, and there is no genus description. set the description
-              if (!wasBaseGenus && !genuses[plantGenusName].hasOwnProperty('Description')) {
-                genuses[plantGenusName]['Description'] = plant['Description'];
-                genuses[plantGenusName]['subtitle'] = `${plant['Genus 2'].trim()} ${plantVarietyName}`;
-                genuses[plantGenusName].key = key;
-              }
-
-              //add variety scientificName and info
-              genuses[plantGenusName]['varieties'][plantVarietyName] = {
-                scientificName: `${plant['Genus 2'].trim()} ${plantVarietyName}`,
-                Description: plant['Description'],
-                img: plant['img'],
-                height: plant['Height'],
-                sizes: [plant['Pot Category']],
-                volumes: [plant['Volume US (Metric)']],
-                gpDescs: [plant['GROWPOINT ITEMDESC']]
-              };
-            }
-            if (isInVariety) {
-              //is the plant is a variety and has genus description already been set?
-              if (!wasBaseGenus && !genuses[plantGenusName].hasOwnProperty('Description')) {
-                genuses[plantGenusName]['Description'] = plant['Description'];
-                genuses[plantGenusName].key = key;
-              }
-              if (!genuses[plantGenusName].hasOwnProperty('subtitle')) {
-                genuses[plantGenusName]['scientificName'] = `${plant['Genus 2'].trim()} ${plantVarietyName}`;
-              }
-
-              //pull out the variety to modify it
-              let existingVariety = genuses[plantGenusName]['varieties'][plantVarietyName];
-
-              //add variety height, volume, size and gpDesc
-              if (existingVariety) {
-                existingVariety.volumes.push(plant['Volume US (Metric)']);
-                existingVariety.sizes.push(plant['Pot Category']);
-                existingVariety.gpDescs.push(plant['GROWPOINT ITEMDESC']);
-
-                //save it back in the genuses collection
-                genuses[plantGenusName]['varieties'][plantVarietyName] = existingVariety;
-              }
-            }
-          }
-        });
-
-        //forEach loop ending, save genuses and varietyNames so next query will dig it
-
-        this.setState({ genuses, varietyNames });
+    let { title, section } = this.props;
+    let genusNames = Object.keys(section.genera);
+    if (section.initialSnap) {
+      //we need to set the genusus state
+      section.genera = {
+        initialSnap: true
       }
-    });
+      //console.log('u want to get genus names', title, section);
+
+      //go to catalogRef
+      catalogRef.orderByChild('PRODUCT GROUP').startAt(title).endAt(title).once('value').then((snapshot) => {
+        let sectionSnap = snapshot.val();
+
+        let genusNames = [];
+        if (sectionSnap) {
+        Object.keys(sectionSnap).map((key, i) => {
+          let plant = sectionSnap[key];
+
+          let plantGenusName = plant['Genus'].trim();
+
+          if (!plantGenusName) {
+            console.log('DOOOOD the genus is blank', plant);
+          }
+
+          let PVN = this.makeVarietyNameCool(plant, title);
+
+          let subtitle = plant['Species 2'].trim();
+          if (!subtitle || PVN.isBaseGenus) {
+            subtitle = PVN.varietyName + ' ' + plantGenusName;
+          } else {
+            subtitle = PVN.varietyName + ' ' + subtitle;
+          }
+
+
+          //we start from scratch then it builds
+          let isInPlants = genusNames.includes(plantGenusName);
+
+          key = key.replace(/.#$\/[]/, ' ');
+
+          if (!isInPlants) {
+            //well now lets just add it
+            genusNames.push(plantGenusName);
+            section.genera[plantGenusName] = {
+              initialSnap: true,
+              Description: plant['Description'],
+              subtitle: subtitle,
+              img: plant['img'] = '',
+              refString: `plants/sections/${title}/genera/${plantGenusName}`,
+              varieties: { initialSnap: true },
+              genusKey: key
+            }
+            // if (!PVN.isBaseGenus) {
+            //   section.genera[plantGenusName].varieties[key] = {
+            //     varietyName: PVN.varietyName,
+            //     scientificName: subtitle,
+            //     height: plant['Height'],
+            //     sizes: [plant['Pot Category']],
+            //     gpDescs: [plant['GROWPOINT ITEMDESC']],
+            //     volumes: [plant['Volume US (Metric)']],
+            //     Description: plant['Description'],
+            //     img: plant['img'] = '',
+            //     refString: PVN.refString
+            //   };
+            // }
+          } else {
+            // //plants already has it, modify the values
+            // let thisGenus = section.genera[plantGenusName];
+            // // pull out the variety
+            // let thisVariety = thisGenus.varieties[key] = {
+            //   varietyName: PVN.varietyName,
+            //   sizes: [],
+            //   volumes: [],
+            //   gpDescs: []
+            // };
+            // //change the values
+            // thisVariety.Description = plant.Description;
+            // thisVariety.img = plant['img'] = '';
+            // thisVariety.scientificName = subtitle;
+            // thisVariety.sizes.push(plant['Pot Category']);
+            // thisVariety.volumes.push(plant['Volume US (Metric)']);
+            // thisVariety.gpDescs.push(plant['GROWPOINT ITEMDESC']);
+            // //save it back to the genus
+            // thisGenus.varieties[key] = thisVariety;
+            // //save the genus back to the sections
+            // section.genera[plantGenusName] = thisGenus;
+
+            section.initialSnap = false;
+            //lets save the updated plants to the db
+            plantsRef.child(title).set(section);
+
+          }
+          //if in plants ends
+        });
+        // looping of init snap ends
+
+        //this.setState({section});
+        console.log('section is now', section);
+
+        section.initialSnap = false;
+        //save it to firebase!
+        plantsRef.child(title).set(section);
+
+      } else {
+        console.log('snap was null');
+      }
+      });
+      //query loop ends
+    } else {
+      //section is real deal, not initial snap.
+      console.log('section means business', section);
+      this.setState({section});
+    
+      //console.log('u got more kids', section);
+    }
   }
-  // all queries finished
 
   componentWillUnmount() {
     this.setState({ sectionExpanded: false });
-    ref.off();
+  }
+
+  makeRefString(refString, varietyName) {
+    varietyName = varietyName.replace(/[.$#\/\[\]]/g, '-').trim();
+    return refString + '/' + varietyName;
+  }
+
+  makeVarietyNameCool(variety, title) {
+    let varietyName = variety['Variety'].trim();
+    let plantGenusName = variety['Genus'].trim();
+    let refString = `plants/sections/${title}/genera/${plantGenusName}/varieties`;
+    let isBaseGenus = false;
+    if (!varietyName) {
+      varietyName = variety['Variety 2'];
+
+      if (!varietyName) {
+        isBaseGenus = true;
+        console.log('ur variety is weird', varietyName, refString, variety);
+        varietyName = title;
+      }
+    }
+
+    varietyName = varietyName.replace(/[.#$\/]/, '-');
+    refString = this.makeRefString(refString, varietyName);
+    return {varietyName, refString, isBaseGenus};
   }
 
   handleExpandChange(expanded) {
@@ -162,35 +192,45 @@ export default class CatalogSection extends Component {
   }
 
   handleToggle(event, toggle) {
-    this.setState({ sectionExpanded: toggle });
+    let loaded = '';
+    if (toggle === true) {
+      loaded = 'Plants below expand'
+    } else {
+      loaded = 'Load section'
+    }
+    this.setState({ sectionExpanded: toggle, loaded });
   }
-
 
   // send the genuses to catalog genus with genusName, genusDescription and scientificName
   render() {
-    let { genuses } = this.state;
     let { title } = this.props;
-    if (Object.keys(genuses).length < 0) {
+    let {section} = this.state;
+    if (!section) {
       return (<div>loading</div>)
     } else {
       return (
         <Card key={title} className='section-card' expanded={this.state.sectionExpanded} onExpandChange={this.handleExpandChange.bind(this)}>
-          <CardHeader title={<CardTitle title={title}
+          <CardHeader title={<CardTitle title={title} titleStyle={styles.title}
             children={
               <Toggle
                 toggled={this.state.sectionExpanded}
                 onToggle={this.handleToggle.bind(this)}
                 labelPosition='right'
-                label='Click here to load section'
+                label={this.state.loaded}
+                labelStyle={styles.title}
                 />
             } />}
-            avatar={Brachy} />
-          {Object.keys(genuses).map((key, i) => {
-            return <CatalogGenus expandable={true} genus={genuses[key]} key={genuses[key].key} title={key}
-            subtitle={genuses[key].subtitle} description={genuses[key]['Description']} />
+            avatar={PeoriaIcon} />
+          {Object.keys(section.genera).map((key, i) => {
+            if (key !== 'initialSnap') {
+              return <CatalogGenus expandable={true} genus={section.genera[key]} key={key} title={key} sectionName={title} makeVarietyNameCool={this.makeVarietyNameCool}
+              />
+            }
           })}
         </Card>
       );
     }
   }
 }
+
+export default Radium(CatalogSection);

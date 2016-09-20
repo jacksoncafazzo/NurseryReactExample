@@ -1,20 +1,20 @@
 .catalog-index {
   width: 100%;
   display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
+  flex-flow: column wrap;
+  justify-content: flex-start;
 }
 
 .section-tabs-container {
-  display: flex;
+  /*display: flex;
   flex-flow: row wrap;
-  width: 100%;
+  width: 100%;*/
 }
 
 .index-card {
   width: 100%;
-  margin: 1%;
-  padding-left: 15px;
+  padding: 1%;
+
   /*display: flex;
   flex-flow: column wrap;
   justify-content: flex-start;*/
@@ -23,10 +23,60 @@
 .section-card {
   color: 'red';
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
 }
 
 .genus-card {
   display: flex;
+  flex-flow: row wrap;
   max-width: '100px';
+  justify-content: flex-start;
+
+}
+
+.genus-card-header {
+  font-weight: 500;
+  width: 100%;
+}
+
+.genus-card-variety {
+  width: 100%;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+}
+
+.variety-card {
+  width: 100%;
+  display: flex;
+  flex-flow: row-reverse wrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.variety-img {
+  width: 50%;
+  max-width: 400px;
+}
+
+ul.variety-list {
+  margin-left: -35px;
+  padding-right: 20px;
+  max-width: 250px;
+  list-style: none;
+  font-weight: 400;
+  font-size: 18px;
+  font-family: 'Vollkorn', serif;
+}
+
+.variety-card-header {
+  font-weight: 500;
+  font-family: 'Vollkorn', serif;
+}
+
+.variety-actions {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: space-between;
+  align-items: center;
 }

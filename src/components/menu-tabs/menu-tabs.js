@@ -12,12 +12,12 @@ import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import Divider from 'material-ui/Divider';
 
 import Home from './home';
 import Personnel from './personnel';
-import CatalogIndex from '../catalog/catalog-index';
+
 import WholesaleCustomers from './wholesale-customers';
-import Footer from '../footer';
 
 import { colors } from 'material-ui/styles';
 
@@ -51,8 +51,6 @@ const styles = {
     background: colors.amber500
   },
 };
-
-const tabNames = ['Home', 'About', 'Plants', 'Wholesale', 'Contact']
 
 class MenuTabsSwipeable extends React.Component {
   constructor(props) {
