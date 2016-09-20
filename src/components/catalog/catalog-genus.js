@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Radium from 'radium';
 import { Card, CardHeader, CardTitle, CardText, CardMedia, CardActions } from 'material-ui/Card';
 // import CatalogGenus2 from './catalog-genus2.js';
-import '../../styles/catalog-index.css';
+import '../../public/styles/catalog-index.css';
 import Toggle from 'material-ui/Toggle';
 import CatalogVariety from './catalog-variety';
 import AddImage from '../add/add-image';

@@ -6,9 +6,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import GoogleMap from './google-map';
 
-import PeoriaMap from '../../imgs/peoriamap.gif';
-import frontOfCatalog from '../../imgs/2016FrontCover.jpg';
-import pgCrew from '../../imgs/PeoriaPersonnel20Apr15.jpg';
+import PeoriaMap from '../../public/imgs/peoriamap.gif';
+import frontOfCatalog from '../../public/imgs/2016FrontCover.jpg';
+import pgCrew from '../../public/imgs/PeoriaPersonnel20Apr15.jpg';
 
 import Accessible from 'material-ui/svg-icons/action/accessible';
 

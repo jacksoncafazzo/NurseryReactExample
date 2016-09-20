@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Card, CardHeader, CardTitle, CardText, CardMedia, CardActions } from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import ImageEdit from 'material-ui/svg-icons/image/edit';
-import '../../styles/catalog-index.css';
+import '../../public/styles/catalog-index.css';
 
 import AddImage from '../add/add-image';
 

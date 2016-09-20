@@ -4,7 +4,7 @@ import Search from 'material-ui/svg-icons/action/search'
 
 import AutoComplete from 'material-ui/AutoComplete';
 
-import '../../styles/catalog-index.css';
+import '../../public/styles/catalog-index.css';
 
 export default class CatalogSearch extends Component {
   constructor(props) {

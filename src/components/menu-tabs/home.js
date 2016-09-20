@@ -11,15 +11,15 @@ import { GridList, GridTile } from 'material-ui/GridList';
 import Radium from 'radium';
 import {colors} from 'material-ui/styles';
 
-import NoGmo from '../../imgs/NonGMOnNeonicFree.gif';
-import AirPhoto from '../../imgs/AirPhoto.jpg';
-import pgLogo from  '../../imgs/peoria-logo-textwhite-transparent.png';
-import BrachyMauve from '../../imgs/BracteanthaMohaveDarkRed.jpg';
-import frontOfCatalog from '../../imgs/2016FrontCover.jpg';
-import PersonnelPhoto from '../../imgs/PeoriaPersonnel20Apr15.jpg';
+import NoGmo from '../../public/imgs/NonGMOnNeonicFree.gif';
+import AirPhoto from '../../public/imgs/AirPhoto.jpg';
+import pgLogo from  '../../public/imgs/peoria-logo-textwhite-transparent.png';
+import BrachyMauve from '../../public/imgs/BracteanthaMohaveDarkRed.jpg';
+import frontOfCatalog from '../../public/imgs/2016FrontCover.jpg';
+import PersonnelPhoto from '../../public/imgs/PeoriaPersonnel20Apr15.jpg';
 import FaPagelines from 'react-icons/lib/fa/pagelines';
 
-import '../../styles/home-styles.css';
+import '../../public/styles/home-styles.css';
 
 import firebase from 'firebase';
 

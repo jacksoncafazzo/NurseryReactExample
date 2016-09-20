@@ -11,9 +11,9 @@ import {colors} from 'material-ui/styles';
 import CatalogGenus from './catalog-genus';
 import CatalogSearch from './catalog-search';
 
-import PeoriaIcon from '../../imgs/peoria-icon.png';
+import PeoriaIcon from '../../public/imgs/peoria-icon.png';
 
-import '../../styles/catalog-index.css';
+import '../../public/styles/catalog-index.css';
 
 const plantsRef = firebase.database().ref('plants/sections');
 const catalogRef = firebase.database().ref('catalog');
@@ -153,7 +153,7 @@ class CatalogSection extends Component {
       //section is real deal, not initial snap.
       console.log('section means business', section);
       this.setState({section});
-    
+
       //console.log('u got more kids', section);
     }
   }

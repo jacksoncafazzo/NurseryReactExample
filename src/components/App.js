@@ -17,10 +17,10 @@ import Divider from 'material-ui/Divider';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import pgTheme from '../styles/pg-theme.js';
+import pgTheme from '../public/styles/pg-theme.js';
 import Footer from './footer';
 
-import BannerWide from '../imgs/peoria-wide-banner.jpg';
+import BannerWide from '../public/imgs/peoria-wide-banner.jpg';
 
 
 class App extends Component {

@@ -20,30 +20,21 @@
   justify-content: flex-start;*/
 }
 
-.section-card {
-  color: 'red';
-  display: flex;
-  justify-content: space-between;
-}
-
 .genus-card {
   display: flex;
-  flex-flow: row wrap;
-  max-width: '100px';
+  flex-flow: column wrap;
+  max-width: 100%;
   justify-content: flex-start;
 
 }
 
 .genus-card-header {
   font-weight: 500;
-  width: 100%;
 }
 
 .genus-card-variety {
-  width: 100%;
   display: flex;
   flex-flow: column wrap;
-  justify-content: center;
 }
 
 .variety-card {

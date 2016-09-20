@@ -20,7 +20,7 @@ import CatalogSearch from './catalog-search';
 import firebase from 'firebase';
 import {colors} from 'material-ui/styles';
 
-import '../../styles/catalog-index.css';
+import '../../public/styles/catalog-index.css';
 
 const plantsRef = firebase.database().ref('plants');
 const catalogRef = firebase.database().ref('catalog');
@@ -126,7 +126,7 @@ class CatalogIndex extends Component {
         });
         } else {
           //plants is valid and not initialSnap
-          
+
           console.log('ths snap', plants);
 
           let menuRender = this.renderSectionTabs(Object.keys(plants.sections));
@@ -395,7 +395,7 @@ class CatalogIndex extends Component {
             value={this.state.plantsSlideIndex}
             style={styles.tabs}
             className='section-tabs'
-            inkBarStyle={{backgroundColor: colors.yellow500}}
+            inkBarStyle={styles.inkBarStyle}
             children={menuRender} />
           <Card className='index-card'>
           <SwipeableViews
