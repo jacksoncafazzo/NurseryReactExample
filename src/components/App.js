@@ -201,7 +201,7 @@ class App extends Component {
     },
     {
       tabName: 'Contact',
-      dataRoute: '/',
+      dataRoute: '/personnel',
     }];
 
     return (

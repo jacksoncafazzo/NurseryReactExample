@@ -14,6 +14,7 @@ import UpdateCatalog from './components/catalog/update-catalog';
 import MenuTabsSwipeable from './components/menu-tabs/menu-tabs';
 import CatalogIndex from './components/catalog/catalog-index';
 import WholesaleCustomers from './components/menu-tabs/wholesale-customers';
+import Personnel from './components/menu-tabs/personnel';
 
 export default (
   <Route path='/' component={App}>
@@ -26,5 +27,6 @@ export default (
     <Route path='/update' component={UpdateCatalog} />
     <Route path='/catalog' component={CatalogIndex} />
     <Route path='/quality' component={WholesaleCustomers} onEnter={requireAuth} />
+    <Route path='/personnel' component={Personnel} />
   </Route>
 );

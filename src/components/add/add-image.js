@@ -123,7 +123,17 @@ class AddImage extends Component {
     let { completed } = this.state;
     return (
       <div>
-
+        <form onSubmit={this.editImageName.bind(this)} style={styles.form}>
+          <TextField floatingLabelText='Enter an existing image name, or add a file'
+          name='imageName' value={this.state.imageName} onChange={this.handleTextFieldChange.bind(this)} />
+          <RaisedButton
+            label='Change db entry'
+            style={styles.button}
+            type='submit'
+            icon={<ImageEdit />}
+            secondary={true}
+            />
+      </form>
       <form onSubmit={this.addImage.bind(this)} style={styles.form}>
         <input label={`Change image ${<ImageEdit />}`} type='file' accept='*.png' id='img' onChange={this.handleChange.bind(this)} />
         <div>{this.state.message}{(completed > 0) ? <CircularProgress mode="determinate" value={this.state.completed} color={colors.green500}/> : null}</div>
@@ -132,7 +142,7 @@ class AddImage extends Component {
           label='Upload new image'
           style={styles.button}
           type='submit'
-          primary={true}
+          
           />
       </form>
     </div>
@@ -149,15 +159,3 @@ AddImage.contextTypes = {
 }
 
 export default Radium(AddImage);
-
-// <form onSubmit={this.editImageName.bind(this)} style={styles.form}>
-//   <TextField floatingLabelText='Enter an existing image name, or add a file'
-//   name='imageName' value={this.state.imageName} onChange={this.handleTextFieldChange.bind(this)} />
-//     <RaisedButton
-//       label='Change db entry'
-//       style={styles.button}
-//       type='submit'
-//       icon={<ImageEdit />}
-//       secondary={true}
-//       />
-// </form>

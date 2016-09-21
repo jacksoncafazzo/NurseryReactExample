@@ -34,7 +34,7 @@ export default class CatalogVariety extends Component {
 
     return (<Card key={j} className='variety-card'>
       <CardHeader className='variety-card-header' title={<CardTitle
-          title={varietyName}
+          title={genusName + ' - ' + varietyName}
           />}
           actAsExpander={true}
           subtitle={subtitle}

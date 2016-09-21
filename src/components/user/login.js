@@ -6,7 +6,7 @@ import {loginUser, fetchUser, loginWithProvider} from '../actions/firebase_actio
 
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import {colors} from 'material-ui/styles';
+// import {colors} from 'material-ui/styles';
 
 class UserLogin extends Component {
     constructor(props) {

@@ -3,19 +3,16 @@ import Radium from 'radium';
 import firebase from 'firebase';
 import { browserHistory } from 'react-router';
 
-import {Card, CardHeader, CardTitle, CardMedia, CardText,CardActions } from 'material-ui/Card';
+import {Card, CardMedia, CardText,CardActions } from 'material-ui/Card';
 import { Tabs, Tab } from 'material-ui/Tabs';
-import RaisedButton from 'material-ui/RaisedButton';
 import {colors} from 'material-ui/styles';
-
-import RenderTabs from './render-tabs';
 
 import SwipeableViews from 'react-swipeable-views';
 
 // import GoogleMap from './google-map';
 
 import PeoriaMap from '../../public/imgs/peoriamap.gif';
-import frontOfCatalog from '../../public/imgs/2016FrontCover.jpg';
+// import frontOfCatalog from '../../public/imgs/2016FrontCover.jpg';
 import pgCrew from '../../public/imgs/PeoriaPersonnel20Apr15.jpg';
 
 import Accessible from 'material-ui/svg-icons/action/accessible';
