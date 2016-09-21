@@ -18,11 +18,21 @@ export default class CatalogVariety extends Component {
     }
   }
 
-  renderVariety(variety, varietyName) {
+  componentWillMount() {
+
+  }
+
+  // getImage(imageName) {
+  //   firebase.storage().ref().child(`images/${imageName}`).getDownloadURL().then((url) => {
+  //     return url
+  //   });
+  // }
+
+  renderVariety(variety, varietyName, j) {
     let renderArray = [];
     let { genusName, varieties, subtitle, refString } = this.props;
 
-    return (<Card key={variety.gpDescs[0]}>
+    return (<Card key={j} className='variety-card'>
       <CardHeader className='variety-card-header' title={<CardTitle
           title={varietyName}
           />}
@@ -32,7 +42,7 @@ export default class CatalogVariety extends Component {
           showExpandableButton={true}
           avatar={variety.img}
           />);
-          <CardText expandable={true} className='variety-card'>
+          <CardText expandable={true} className='variety-contents'>
             {(variety.img) ?
               <CardMedia className='variety-img' overlay={<CardTitle subtitle={variety.scientificName} expandable={true} />} >
                 <img src={variety.img} alt={variety.scientificName} />
@@ -44,7 +54,7 @@ export default class CatalogVariety extends Component {
               <li>Sizes available: </li>
               <ul>
                 {variety.sizes.map((size, i) => {
-                  return <li key={i}>{variety.gpDescs}<br />{size} - volume: {variety.volumes[i]}</li>
+                  return (<div key={'div' + i}><li key={'desc' + i}>{variety.gpDescs}</li><li key={'volume' + i}>{size} - volume: {variety.volumes[i]}</li></div>)
                 })}
               </ul>
             </ul>
@@ -62,8 +72,8 @@ export default class CatalogVariety extends Component {
     if (varieties) {
         return (
           <Card className='variety-card'>
-            {Object.keys(varieties).map((key) => {
-              return this.renderVariety(varieties[key], key)
+            {Object.keys(varieties).map((key, i) => {
+              return this.renderVariety(varieties[key], key, i)
             })}
             </Card>
           );

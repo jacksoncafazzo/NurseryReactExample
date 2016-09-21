@@ -211,6 +211,7 @@ class CatalogSection extends Component {
       return (
         <Card key={title} className='section-card' expanded={this.state.sectionExpanded} onExpandChange={this.handleExpandChange.bind(this)}>
           <CardHeader title={<CardTitle title={title} titleStyle={styles.title}
+            actAsExpander={true}
             children={
               <Toggle
                 toggled={this.state.sectionExpanded}

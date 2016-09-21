@@ -13,7 +13,7 @@ import requireAuth from './components/utils/authenticated';
 import UpdateCatalog from './components/catalog/update-catalog';
 import MenuTabsSwipeable from './components/menu-tabs/menu-tabs';
 import CatalogIndex from './components/catalog/catalog-index';
-
+import WholesaleCustomers from './components/menu-tabs/wholesale-customers';
 
 export default (
   <Route path='/' component={App}>
@@ -25,5 +25,6 @@ export default (
     <Route path='/profile' component={UserProfile} onEnter={requireAuth} />
     <Route path='/update' component={UpdateCatalog} />
     <Route path='/catalog' component={CatalogIndex} />
+    <Route path='/quality' component={WholesaleCustomers} onEnter={requireAuth} />
   </Route>
 );

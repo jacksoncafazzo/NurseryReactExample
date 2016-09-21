@@ -41,11 +41,9 @@ class Login extends Component {
             onChange={event => this.setState({ email: event.target.value })}
             />
           </div>
-          <div className='form-group'>
-            <TextField name='pw' type='password'  floatingLabelText='Password'
+          <TextField name='pw' type='password'  floatingLabelText='Password'
             onChange={event => this.setState({ pw: event.target.value })}
           />
-          </div>
           {errors}
           <RaisedButton type='submit' label='Login'></RaisedButton>
         </form>

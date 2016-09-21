@@ -1,5 +1,6 @@
 .catalog-index {
   width: 100%;
+  min-height: 500px;
   display: flex;
   flex-flow: column wrap;
   justify-content: flex-start;
@@ -20,6 +21,12 @@
   justify-content: flex-start;*/
 }
 
+.genus-actions {
+  display: flex;
+  justify-content: space-around;
+  
+}
+
 .genus-card {
   display: flex;
   flex-flow: column wrap;
@@ -38,16 +45,22 @@
 }
 
 .variety-card {
-  width: 100%;
+  display: flex;
+  min-width: 600px;
+  flex-flow: column wrap;
+
+}
+
+.variety-contents {
   display: flex;
   flex-flow: row-reverse wrap;
-  justify-content: flex-end;
-  align-items: center;
+  justify-content: space-around;
 }
 
 .variety-img {
-  width: 50%;
-  max-width: 400px;
+  display: flex;
+  align-self: center;
+
 }
 
 ul.variety-list {
@@ -68,6 +81,6 @@ ul.variety-list {
 .variety-actions {
   display: flex;
   flex-flow: column wrap;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }

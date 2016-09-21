@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
+import Radium from 'radium';
 import firebase from 'firebase';
+import { browserHistory } from 'react-router';
 
 import {Card, CardHeader, CardTitle, CardMedia, CardText,CardActions } from 'material-ui/Card';
+import { Tabs, Tab } from 'material-ui/Tabs';
 import RaisedButton from 'material-ui/RaisedButton';
+import {colors} from 'material-ui/styles';
 
-import GoogleMap from './google-map';
+import RenderTabs from './render-tabs';
+
+import SwipeableViews from 'react-swipeable-views';
+
+// import GoogleMap from './google-map';
 
 import PeoriaMap from '../../public/imgs/peoriamap.gif';
 import frontOfCatalog from '../../public/imgs/2016FrontCover.jpg';
@@ -12,58 +20,118 @@ import pgCrew from '../../public/imgs/PeoriaPersonnel20Apr15.jpg';
 
 import Accessible from 'material-ui/svg-icons/action/accessible';
 
-export default class WholesaleCustomers extends Component {
+const styles = {
+  div: {
+    display: 'flex',
+    flexFlow: 'column wrap',
+    justifyContent: 'space-around'
+  },
+  default_tab: {
+    background: [
+      `linear-gradient(${colors.green500}, ${colors.amber500})`,
+      // fallback
+      colors.lightGreen500,
+    ],
+    color: 'white',
+    fontWeight: 'bold'
+  },
+  cards: {
+    display: 'flex',
+    flexFlow: 'row wrap',
+    justifyContent: 'space-around'
+  },
+  welcomeCard: {
+    width: 420,
+    margin: 10,
+    textAlign: 'center',
+    justifyContent: 'center'
+  },
+  card: {
+    width: 360,
+    margin: 10
+  },
+  cardImage: {
+    marginLeft: '5%',
+    marginRight: '5%'
+  },
+  title: {
+    fontStyle: 'italic'
+  },
+  ul: {
+    listStyleType: 'disc',
+    textAlign: 'left'
+  },
+  catalogImg: {
+    margin: 20
+  },
+  mapImage: {
+    margin: 7,
+  },
+  inkBarStyle: {
+    background: colors.red900
+  }
+}
+
+
+class WholesaleCustomers extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      catalogDownload: ''
+      catalogDownload: '',
+      wholesaleSlideIndex: 0
     }
   }
 
   componentWillMount() {
-
     firebase.storage().ref().child('2016 Catalog.pdf').getDownloadURL().then((url) => {
       this.setState({catalogDownload: url})
     });
   }
 
+  handleActive(tab) {
+    location.assign(tab.props['data-route'])
+    // selectTab(tab.value);
+  //  browserHistory.push(tab.props['data-route']);
+  }
+
+  handleChange(value) {
+    this.setState({ slideIndex: value })
+  };
+
   render() {
-    let styles = {
-      div: {
-        display: 'flex',
-        flexFlow: 'row wrap',
-        justifyContent: 'space-around'
-      },
-      welcomeCard: {
-        width: 420,
-        margin: 10,
-        textAlign: 'center',
-        justifyContent: 'center'
-      },
-      card: {
-        width: 360,
-        margin: 10
-      },
-      cardImage: {
-        marginLeft: '5%',
-        marginRight: '5%'
-      },
-      mapImage: {
-        margin: 7,
-      },
-      title: {
-        fontStyle: 'italic'
-      },
-      ul: {
-        listStyleType: 'disc',
-        textAlign: 'left'
-      },
-      catalogImg: {
-        margin: 20
-      }
-    }
+
+    const tabValues = [{
+      tabName: 'welcome',
+      dataRoute: '#'
+    },
+    {
+      tabName: 'catalog',
+      dataRoute: 'https://firebasestorage.googleapis.com/v0/b/peoria-gardens.appspot.com/o/2016%20Catalog.pdf?alt=media&token=c93b6aea-a070-4284-b3e7-4eacb18616d2'
+    },
+    {
+      tabName: 'now blooming',
+      dataRoute: 'https://firebasestorage.googleapis.com/v0/b/peoria-gardens.appspot.com/o/Availability.xls?alt=media&token=1deb9a39-e62e-4452-8db4-28285d5910b7',
+    },
+];
+
     return (
       <div style={styles.div}>
+        <Tabs
+          style={styles.tabs}
+          className='menu-tabs'
+          inkBarStyle={styles.inkBarStyle}
+          children={tabValues.map((tab, i) => {
+            return (<Tab label={tab.tabName} value={i}
+                data-route={tab.dataRoute}
+                onActive={this.handleActive}
+                style={styles.default_tab} />)
+              })}>
+        </Tabs>
+        <SwipeableViews
+          index={this.state.slideIndex}
+          onChangeIndex={this.handleChange}
+        >
+        <div style={styles.cards}>
         <Card style={styles.welcomeCard}>
           <CardText>
             <h3 className='headline'>We welcome our wholesale customers to come by and visit!</h3>
@@ -97,10 +165,22 @@ export default class WholesaleCustomers extends Component {
             </CardMedia>
           </CardText>
           </Card>
+        </div>
+
+        <div className='catalog' >
+          Link to catalog
+        </div>
+
+        <div className='now-blooming'>
+          link to availability
+        </div>
+        </SwipeableViews>
       </div>
     );
   }
 }
+
+export default Radium(WholesaleCustomers);
 
 // <Card style={styles.card}>
 //   <CardMedia style={styles.catalogImg}>

@@ -17,7 +17,7 @@ export function fetchUserObject(obj) {
 }
 
 
-// save current user and than return it Proise this
+// save current user and than return it (Promise this)
 export function currentUserPromise() {
     return new Promise((resolve, reject) => {
         let userObject = localStorage.getItem('currentUser');

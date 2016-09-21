@@ -14,6 +14,8 @@ import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Divider from 'material-ui/Divider';
 
+import RenderTabs from './render-tabs';
+
 import Home from './home';
 import Personnel from './personnel';
 
@@ -90,37 +92,9 @@ class MenuTabsSwipeable extends React.Component {
       ]
   }
 
-  handleActive(tab) {
-    selectTab(tab.value);
-    browserHistory.push(tab.props['data-route']);
-  }
-
-  renderTabs() {
-    const tabNames = ['Home', 'About', 'Plants', 'Wholesale', 'Contact'];
-    let tabArray = [];
-    tabNames.forEach((tabName, i) => {
-      if (i === 2) {
-        tabArray.push(<Tab label={tabName} value={i}
-          data-route='/catalog'
-          onActive={this.handleActive.bind(this)}
-          style={styles.default_tab}/>);
-      } else {
-        tabArray.push(<Tab label={tabName} value={i}  style={styles.default_tab}/>);
-      }
-    });
-    return tabArray;
-  }
-
   render() {
     return (
       <div>
-        <Tabs
-          onChange={this.handleChange}
-          value={this.props.slideIndex}
-          style={styles.tabs}
-          className='menu-tabs'
-          children={this.renderTabs()}>
-        </Tabs>
         <SwipeableViews
           index={this.props.slideIndex}
           onChangeIndex={this.handleChange}

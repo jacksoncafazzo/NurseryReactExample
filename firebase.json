@@ -4,7 +4,6 @@
   },
   "hosting": {
     "public": "build",
-    "homepage": "http://jacksoncafazzo.github.io/peoria-gardens",
     "rewrites": [
       {
         "source": "**",

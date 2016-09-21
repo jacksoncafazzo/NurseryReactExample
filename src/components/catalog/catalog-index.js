@@ -9,8 +9,7 @@ import { selectTab, consumePlants } from '../actions/index';
 import { fetchUser } from '../actions/firebase_actions';
 
 import { Card } from 'material-ui/Card';
-import { Tabs, Tab } from 'material-ui/Tabs';
-
+import { Tab, Tabs } from 'material-ui/Tabs';
 import LinearProgress from 'material-ui/LinearProgress';
 //import Star from 'material-ui/svg-icons/action/stars'
 
@@ -44,7 +43,7 @@ const styles = {
     borderColor: colors.yellowA200
   },
   inkBarStyle: {
-    background: colors.amber500
+    background: colors.red500
   },
 };
 
@@ -54,7 +53,6 @@ class CatalogIndex extends Component {
 
     this.state = {
       plantsSlideIndex: 0,
-      fakeSlideIndex: 2,
       renderArray: [],
       menuRender: null,
       loaded: false,
@@ -68,6 +66,12 @@ class CatalogIndex extends Component {
   }
 
   componentWillMount() {
+    if (!this.props.currentUser) {
+      firebase.auth().signInAnonymously().then(console.log('haaaaaaaaaaaaaay u logged in anonymously')).catch((error) => {
+        console.log('login error', error.code, error.message)
+      });
+    }
+
     plantsRef.once('value', (snapshot) => {
       console.log('u went to get the plants');
       let plants = snapshot.val();
@@ -139,6 +143,10 @@ class CatalogIndex extends Component {
           });
         }
     });
+  }
+
+  componentWillUnmount() {
+
   }
 
 
@@ -365,20 +373,16 @@ class CatalogIndex extends Component {
           onActive={this.handleActive.bind(this)}
           style={styles.default_tab}/>);
       } else {
+        if (i === 3) {
+          tabArray.push(<Tab label={tabName} value={i}
+            data-route='/quality'
+            onActive={this.handleActive.bind(this)}
+            style={styles.default_tab}/>);
+        }
         tabArray.push(<Tab label={tabName} onActive={this.handleActive.bind(this)} data-route='/' value={i} style={styles.default_tab}/>);
       }
     });
     return tabArray;
-  }
-
-  renderFakeTopTabs() {
-    return (<Tabs
-      onChange={this.handleChange}
-      value={this.state.fakeSlideIndex}
-      style={styles.tabs}
-      className='menu-tabs'
-      children={this.renderFakeTabs()}>
-    </Tabs>)
   }
 
   render() {
@@ -387,7 +391,6 @@ class CatalogIndex extends Component {
 
     return (
       <div className='catalog-index'>
-        {this.renderFakeTopTabs()}
         <div className='section-tabs-container'>
         {(loaded) ?
           <div><Tabs

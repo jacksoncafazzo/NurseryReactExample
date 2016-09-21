@@ -18,15 +18,41 @@ import Divider from 'material-ui/Divider';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import pgTheme from '../public/styles/pg-theme.js';
+import { colors } from 'material-ui/styles';
+
 import Footer from './footer';
 
 import BannerWide from '../public/imgs/peoria-wide-banner.jpg';
 
+import RenderTabs from './menu-tabs/render-tabs';
+
+const styles = {
+  default_tab:{
+    color: colors.white,
+    background: [
+      `linear-gradient(${colors.lightGreen500}, ${colors.green500})`,
+
+      // fallback
+      colors.lightGreen500,
+    ],
+    fontWeight: 700,
+  },
+  active_tab:{
+    color: colors.yellowA200,
+    borderColor: colors.yellowA200
+  },
+  inkBarStyle: {
+    background: colors.amber500
+  },
+};
+
+const auth = firebase.auth();
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loggedIn: (null !== auth.currentUser),
       currentUser: {},
       plants: {},
       slideIndex: 0,
@@ -36,6 +62,29 @@ class App extends Component {
     this.props.fetchUser();
     this.logOut = this.logOut.bind(this);
     this.handleMenuChange = this.handleMenuChange.bind(this);
+  }
+
+  componentWillMount() {
+    firebase.auth().onAuthStateChanged(firebaseUser => {
+      this.setState({
+        loggedIn: (null !== firebaseUser)
+      });
+
+      if (firebaseUser) {
+        console.log('Logged IN', firebaseUser);
+      } else {
+        console.log('Not logged in');
+      }
+    });
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.handleResize.bind(this));
+  }
+
+  componentWillUnmount() {
+    firebase.auth().onAuthStateChanged();
+    window.removeEventListener('resize', this.handleResize.bind(this));
   }
 
   handleChange(value) {
@@ -52,14 +101,6 @@ class App extends Component {
     return { muiTheme: getMuiTheme(pgTheme)};
   }
 
-  componentDidMount() {
-    window.addEventListener('resize', this.handleResize.bind(this));
-  }
-
-  componentWillUnmount() {
-    firebase.auth().onAuthStateChanged();
-    window.removeEventListener('resize', this.handleResize.bind(this));
-  }
 
   handleResize() {
     this.setState({windowWidth: window.innerWidth});
@@ -142,12 +183,34 @@ class App extends Component {
   }
 
   render() {
+    const tabValues = [{
+      tabName: 'Home',
+      dataRoute: '/'
+    },
+    {
+      tabName: 'About',
+      dataRoute: '/',
+    },
+    {
+      tabName: 'Plants',
+      dataRoute: '/catalog',
+    },
+    {
+      tabName: 'Wholesale',
+      dataRoute: '/quality',
+    },
+    {
+      tabName: 'Contact',
+      dataRoute: '/',
+    }];
+
     return (
       <MuiThemeProvider muiTheme={getMuiTheme(pgTheme)}>
       <div className='App'>
         <div style={{display:'flex',justifyContent:'center'}}>
         <img src={BannerWide} alt='Peoria Gardens Inc.' style={{margin: 10}}/>
         </div>
+        <RenderTabs styles={styles} tabValues={tabValues} />
         {this.props.children}
         <Footer />
       </div>

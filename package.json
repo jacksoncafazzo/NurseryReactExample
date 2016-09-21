@@ -2,6 +2,7 @@
   "name": "nursery",
   "version": "0.0.1",
   "private": true,
+  "homepage": "http://jacksoncafazzo.github.io/peoria-gardens",
   "devDependencies": {
     "babel-eslint": "^6.1.2",
     "eslint-plugin-flowtype": "^2.11.4",

@@ -185,7 +185,7 @@ class CatalogGenus extends Component {
               showExpandableButton={true}
               avatar={avatar}
               />
-            <CardActions expandable={true}>
+            <CardActions expandable={true} className='genus-actions'>
               <AddImage plant={genus} refString={refString} />
               </CardActions>
               <CardText className='genus-card-variety' expandable={true}>

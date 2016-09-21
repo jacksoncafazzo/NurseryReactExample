@@ -32,7 +32,7 @@ class PeoriaFooter extends Component {
       this.props.selectTab(index);
       browserHistory.push('/catalog');
     } else {
-      if (this.props.slideIndex === 2) {
+      if (this.props.slideIndex === 2 || this.props.slideIndex === 3) {
         browserHistory.push('/');
       }
       this.props.selectTab(index);
